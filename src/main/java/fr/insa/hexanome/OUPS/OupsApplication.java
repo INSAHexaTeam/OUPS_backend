@@ -1,5 +1,6 @@
 package fr.insa.hexanome.OUPS;
 
+import fr.insa.hexanome.OUPS.model.Carte;
 import fr.insa.hexanome.OUPS.services.FabriquePaterne;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,14 +18,17 @@ import java.io.IOException;
 public class OupsApplication {
 
 	public static void main(String[] args) {
-//		SpringApplication.run(OupsApplication.class, args);
+		SpringApplication.run(OupsApplication.class, args);
 //		Ouvrir ressource petitPlan.xml :
-		FabriquePaterne fabriquePaterne = new FabriquePaterne();
-		try {
-			fabriquePaterne.chargePlan("src/main/resources/fichiersXMLPickupDelivery/grandPlan.xml");
-		} catch (ParserConfigurationException | IOException | SAXException e) {
-			e.printStackTrace();
-		}
+//		FabriquePaterne fabriquePaterne = new FabriquePaterne();
+//		try {
+//			Carte c = fabriquePaterne.chargePlan("src/main/resources/fichiersXMLPickupDelivery/petitPlan.xml");
+//			System.out.println(
+//					c.getIntersections().getFirst()
+//			);
+//		} catch (ParserConfigurationException | IOException | SAXException e) {
+//			e.printStackTrace();
+//		}
 
 	}
 

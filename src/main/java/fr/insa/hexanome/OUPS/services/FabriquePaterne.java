@@ -6,6 +6,7 @@ import fr.insa.hexanome.OUPS.model.Voisin;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -22,12 +23,14 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Builder
+@Service
 public class FabriquePaterne {
     private Carte carte;
     public FabriquePaterne() {
         this.carte = new Carte();
     }
-    public void chargePlan(String cheminFichier) throws ParserConfigurationException, IOException, SAXException {
+    public Carte chargePlan(String cheminFichier) throws ParserConfigurationException, IOException, SAXException {
+        this.carte = new Carte();
         File fichier = new File(cheminFichier);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
@@ -36,17 +39,6 @@ public class FabriquePaterne {
 
         //Charger noeuds
         NodeList noeuds = doc.getElementsByTagName("noeud");
-        this.chargerIntersections(noeuds);
-
-        //Charger Segments
-        NodeList troncons = doc.getElementsByTagName("troncon");
-        this.chargerSegment(troncons);
-
-
-        System.out.println(this.carte);
-
-    }
-    private void chargerIntersections(NodeList noeuds) {
         for (int i = 0; i < noeuds.getLength(); i++) {
             Node noeud = noeuds.item(i);
             Intersection intersection = Intersection.builder()
@@ -58,17 +50,17 @@ public class FabriquePaterne {
 
             this.carte.ajouterIntersection(intersection);
         }
-    }
 
-    private void chargerSegment(NodeList nodeList){
-        for (int i = 0; i < nodeList.getLength(); i++) {
+        //Charger Segments
+        NodeList troncons = doc.getElementsByTagName("troncon");
+        for (int i = 0; i < troncons.getLength(); i++) {
 
-            Node noeud = nodeList.item(i);
+            Node noeud = troncons.item(i);
             List<Intersection> intersections = this.carte.trouverIntersectionPourSegment(
                     Long.parseLong(noeud.getAttributes().getNamedItem("origine").getNodeValue()),
                     Long.parseLong(noeud.getAttributes().getNamedItem("destination").getNodeValue())
             );
-
+            //TODO modifier les intersections.get(0) et intersections.get(1) pour qu'ils utilisent le find by id de base (de carte)
             Voisin voisin = Voisin.builder()
                     .nomRue(noeud.getAttributes().getNamedItem("nomRue").getNodeValue())
                     .destination(intersections.get(1))
@@ -76,5 +68,9 @@ public class FabriquePaterne {
                     .build();
             intersections.get(0).ajouterVoisin(voisin);
         }
+        return this.carte;
+    }
+    public void chargerDemande(String cheminFichier){
+
     }
 }
