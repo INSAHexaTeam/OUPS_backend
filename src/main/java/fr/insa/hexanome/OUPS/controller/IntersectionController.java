@@ -25,7 +25,9 @@ public class IntersectionController {
     @GetMapping("/charger")
     public ResponseEntity<Carte> chargerPlan(@RequestParam("cheminFichier") String cheminFichier) {
         try {
-            Carte carte = this.fabriquePaterne.chargePlan(cheminFichier);
+            String chemin_de_base = "src/main/resources/fichiersXMLPickupDelivery/";
+
+            Carte carte = this.fabriquePaterne.chargePlan(chemin_de_base + cheminFichier);
 //            System.out.printf("Carte chargée : %s\n", carte);
             return ResponseEntity.ok(carte);
         } catch (ParserConfigurationException | IOException | SAXException e) {
