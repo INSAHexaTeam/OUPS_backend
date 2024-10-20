@@ -1,5 +1,6 @@
 package fr.insa.hexanome.OUPS.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +15,9 @@ public class Intersection {
     private Long id;
     private Double latitude;
     private Double longitude;
+    @JsonManagedReference
     private List<Voisin> voisins;
+
 
     public Intersection(Long id, Double latitude, Double longitude) {
         this.id = id;
@@ -34,6 +37,5 @@ public class Intersection {
     public void ajouterVoisin(Voisin voisin) {
         this.voisins.add(voisin);
     }
-
 
 }

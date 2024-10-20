@@ -23,6 +23,14 @@ public class Carte {
     public void ajouterIntersection(Intersection intersection) {
         this.intersections.add(intersection);
     }
+    public Intersection trouverIntersectionParId(Long id) {
+        for (Intersection intersection : this.intersections) {
+            if (Objects.equals(intersection.getId(), id)) {
+                return intersection;
+            }
+        }
+        throw new IllegalArgumentException("Intersection non trouvée");
+    }
 
     public List<Intersection> trouverIntersectionPourSegment(Long idOrigine, Long idDestination){
         Intersection origine = null;

@@ -11,8 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Livraison {
-    private Intersection adresseEnlevement;
     private Intersection adresseLivraison;
-    private Integer dureeEnlevement;
-    private Integer dureeLivraison;
 }
