@@ -1,6 +1,7 @@
-package fr.insa.hexanome.OUPS.servicetests;
+package fr.insa.hexanome.OUPS.servicestests;
 
 import fr.insa.hexanome.OUPS.model.Intersection;
+import fr.insa.hexanome.OUPS.model.Voisin;
 import fr.insa.hexanome.OUPS.services.FabriquePaterne;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ class FabriquePaterneTest {
         System.out.println("XML a eté telechargé...");
     }
 
+// Demander si nous gérons l'erreur d'écriture d'un chemin inexistant dans les tests avec try-catch
+// Problèmes d'accès au fichier.
+// SAXException : Erreurs dans le format XML.
 
     @Test
     void verifierTousNoeuds() {
@@ -42,22 +46,30 @@ class FabriquePaterneTest {
     }
 
     @Test
-    void verifierIntersection() {
-        Intersection premierNoeud = fabriquePaterne.getCarte().getIntersections().getFirst();
-        assertEquals(25175778L, premierNoeud.getVoisins().getFirst(), "id correct");
+    void verifierTousSegments() {
+        int i = 0;
+        for (Intersection intersection : fabriquePaterne.getCarte().getIntersections()) {
+            i += intersection.getVoisins().size();
+        }
+        assertEquals(616, i, "Tous les 616 segments ont été ajoutés à la carte");
     }
 
     @Test
-    void recupererNoeud() {
-        //Etant donnes l'Id d'un noeud, recuérer
-        assertEquals(1,1);
+    void verifierVoisins() {
+        //Étant donné une intersection, vérifier que ses voisins ont eté ajoutés
+        Intersection origineNoeud = fabriquePaterne.getCarte().trouverIntersectionParId(25152444L);
+        int i = 0;
+        for (Voisin voisin : origineNoeud.getVoisins()) {
+            Long destinationId = voisin.getDestination().getId();
+            if (destinationId == 26576954L || destinationId == 26576955L || destinationId == 2477791932L) {
+                i ++;
+            };
+        }
+        assertEquals(3, i, "voisins ajoutés correctement");
+        assertEquals(3, origineNoeud.getVoisins().size(), "tous les voisins ajoutés correctement");
     }
 
-    @Test
-    void verifierDesArches() {
-        //Etant donnes 2 noeuds, verifier s'il y a une connection
-        assertEquals(1,1);
-    }
+
 
 }
 
