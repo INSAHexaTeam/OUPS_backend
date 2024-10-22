@@ -2,6 +2,7 @@ package fr.insa.hexanome.OUPS.services;
 
 import fr.insa.hexanome.OUPS.model.Carte;
 import fr.insa.hexanome.OUPS.model.Livraisons;
+import fr.insa.hexanome.OUPS.model.exception.FileExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,10 +56,6 @@ public class GestionService {
             }
         }
     }
-    private void enregistrement(MultipartFile fichier) throws IOException, FileNotFoundException {
-        Path path = Paths.get(this.CHEMIN_DEFAULT);
-        Files.copy(fichier.getInputStream(), path.resolve(Objects.requireNonNull(fichier.getOriginalFilename())));
-    }
 
 
     public Livraisons chargerLivraisonsDepuisXML(EtatType etat, MultipartFile fichier, String cheminVersFichier) throws ParserConfigurationException, IOException, SAXException {
@@ -84,5 +82,21 @@ public class GestionService {
                     return null; // Fin
                 }
             }
-        }    }
+        }
+    }
+    private void enregistrement(MultipartFile fichier) throws IOException {
+        //Extension fichier doit être .xml
+        if (!Objects.requireNonNull(fichier.getOriginalFilename()).endsWith(".xml")){
+            throw new FileExtension("Le fichier n'est pas un fichier XML");
+        }
+
+        Path path = Paths.get(this.CHEMIN_DEFAULT);
+        try{
+            Files.copy(fichier.getInputStream(), path.resolve(Objects.requireNonNull(fichier.getOriginalFilename())));
+        }catch (FileAlreadyExistsException e){
+            Files.delete(path.resolve(Objects.requireNonNull(fichier.getOriginalFilename())));
+            Files.copy(fichier.getInputStream(), path.resolve(Objects.requireNonNull(fichier.getOriginalFilename())));
+
+        }
+    }
 }
