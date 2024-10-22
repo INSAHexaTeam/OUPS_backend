@@ -56,21 +56,24 @@ public class FabriquePaterne {
         for (int i = 0; i < troncons.getLength(); i++) {
 
             Node noeud = troncons.item(i);
-            List<Intersection> intersections = this.carte.trouverIntersectionPourSegment(
-                    Long.parseLong(noeud.getAttributes().getNamedItem("origine").getNodeValue()),
+            Intersection origine = this.carte.trouverIntersectionParId(
+                    Long.parseLong(noeud.getAttributes().getNamedItem("origine").getNodeValue())
+            );
+            Intersection destination = this.carte.trouverIntersectionParId(
                     Long.parseLong(noeud.getAttributes().getNamedItem("destination").getNodeValue())
             );
             //TODO modifier les intersections.get(0) et intersections.get(1) pour qu'ils utilisent le find by id de base (de carte)
             Voisin voisin = Voisin.builder()
                     .nomRue(noeud.getAttributes().getNamedItem("nomRue").getNodeValue())
-                    .destination(intersections.get(1))
+                    .destination(destination)
                     .longueur(Double.parseDouble(noeud.getAttributes().getNamedItem("longueur").getNodeValue()))
                     .build();
-            intersections.get(0).ajouterVoisin(voisin);
+            origine.ajouterVoisin(voisin);
         }
         return this.carte;
     }
     public void chargerDemande(String cheminFichier){
+
 
     }
 }
