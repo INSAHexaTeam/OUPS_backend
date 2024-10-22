@@ -9,6 +9,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 @Service
@@ -44,10 +46,11 @@ public class GestionService {
             }
         }
     }
-    private void enregistrement(MultipartFile fichier) throws IOException {
-        File dest = new File(this.CHEMIN_DEFAULT + fichier.getOriginalFilename());
-        fichier.transferTo(dest);
-
+    private void enregistrement(MultipartFile fichier) throws IOException, FileNotFoundException {
+        String filePath = System.getProperty("user.dir") + this.CHEMIN_DEFAULT + File.separator + fichier.getOriginalFilename();
+        FileOutputStream fout = new FileOutputStream(filePath);
+        fout.write(fichier.getBytes());
+        fout.close();
     }
 
 }
