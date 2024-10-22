@@ -89,6 +89,7 @@ public class GestionService {
         if (!Objects.requireNonNull(fichier.getOriginalFilename()).endsWith(".xml")){
             throw new FileExtension("Le fichier n'est pas un fichier XML");
         }
+        //TODO @Wassila Reinforce tests by checking the content
 
         Path path = Paths.get(this.CHEMIN_DEFAULT);
         try{
