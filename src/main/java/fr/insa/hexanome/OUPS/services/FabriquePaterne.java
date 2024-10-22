@@ -1,8 +1,6 @@
 package fr.insa.hexanome.OUPS.services;
 
-import fr.insa.hexanome.OUPS.model.Carte;
-import fr.insa.hexanome.OUPS.model.Intersection;
-import fr.insa.hexanome.OUPS.model.Voisin;
+import fr.insa.hexanome.OUPS.model.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -56,21 +54,53 @@ public class FabriquePaterne {
         for (int i = 0; i < troncons.getLength(); i++) {
 
             Node noeud = troncons.item(i);
-            List<Intersection> intersections = this.carte.trouverIntersectionPourSegment(
-                    Long.parseLong(noeud.getAttributes().getNamedItem("origine").getNodeValue()),
+            Intersection origine = this.carte.trouverIntersectionParId(
+                    Long.parseLong(noeud.getAttributes().getNamedItem("origine").getNodeValue())
+            );
+            Intersection destination = this.carte.trouverIntersectionParId(
                     Long.parseLong(noeud.getAttributes().getNamedItem("destination").getNodeValue())
             );
-            //TODO modifier les intersections.get(0) et intersections.get(1) pour qu'ils utilisent le find by id de base (de carte)
             Voisin voisin = Voisin.builder()
                     .nomRue(noeud.getAttributes().getNamedItem("nomRue").getNodeValue())
-                    .destination(intersections.get(1))
+                    .destination(destination)
                     .longueur(Double.parseDouble(noeud.getAttributes().getNamedItem("longueur").getNodeValue()))
                     .build();
-            intersections.get(0).ajouterVoisin(voisin);
+            origine.ajouterVoisin(voisin);
         }
         return this.carte;
     }
-    public void chargerDemande(String cheminFichier){
+    public Livraisons chargerDemande(String cheminFichier) throws ParserConfigurationException, IOException, SAXException {
+        if(carte == null || this.carte.getIntersections().isEmpty()){
+            throw new IllegalArgumentException("Carte non chargée");
+        }
+        System.out.println(this.carte);
+        File fichier = new File(cheminFichier);
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document doc = db.parse(fichier);
+        doc.getDocumentElement().normalize();
 
+        Node nodeEntrepot = doc.getElementsByTagName("entrepot").item(0);
+        Long idEntrepot = Long.parseLong(nodeEntrepot.getAttributes().getNamedItem("adresse").getNodeValue());
+
+        Intersection intersectionEntrepot = this.carte.trouverIntersectionParId(idEntrepot);
+
+        Entrepot entrepot = Entrepot.builder()
+                .intersection(intersectionEntrepot)
+                .heureDepart(nodeEntrepot.getAttributes().getNamedItem("heureDepart").getNodeValue())
+                .build();
+        Livraisons livraisons = new Livraisons(entrepot);
+
+        NodeList nodeListLivraisons = doc.getElementsByTagName("livraison");
+        for(int i = 0; i < nodeListLivraisons.getLength(); i++){
+            Node nodeLivraison = nodeListLivraisons.item(i);
+            Long idLivraison = Long.parseLong(nodeLivraison.getAttributes().getNamedItem("adresseLivraison").getNodeValue());
+            Intersection intersectionLivraison = this.carte.trouverIntersectionParId(idLivraison);
+            Livraison livraison = Livraison.builder()
+                    .adresseLivraison(intersectionLivraison)
+                    .build();
+            livraisons.add(livraison);
+        }
+        return livraisons;
     }
 }

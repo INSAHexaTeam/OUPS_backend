@@ -31,32 +31,4 @@ public class Carte {
         }
         throw new IllegalArgumentException("Intersection non trouvée");
     }
-
-    public List<Intersection> trouverIntersectionPourSegment(Long idOrigine, Long idDestination){
-        Intersection origine = null;
-        Intersection destination = null;
-        int founded = 0;
-        int i = 0;
-        while(founded<2) {
-            Intersection intersection = this.intersections.get(i);
-            if (Objects.equals(intersection.getId(), idOrigine)) {
-                origine = intersection;
-                founded++;
-            }
-            if (Objects.equals(intersection.getId(), idDestination)) {
-                destination = intersection;
-                founded++;
-            }
-            i++;
-        }
-        if (origine == null || destination == null) {
-            throw new IllegalArgumentException("Intersection non trouvée");
-        }
-
-        List<Intersection> intersections = new ArrayList<>();
-        intersections.add(origine);
-        intersections.add(destination);
-        return intersections;
-
-    }
 }
