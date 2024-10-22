@@ -1,6 +1,7 @@
 package fr.insa.hexanome.OUPS.services;
 
 import fr.insa.hexanome.OUPS.model.Carte;
+import fr.insa.hexanome.OUPS.model.Livraisons;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -51,9 +52,13 @@ public class GestionService {
         }
     }
     private void enregistrement(MultipartFile fichier) throws IOException, FileNotFoundException {
-        //path to resources :
-        Path path = Paths.get("src/main/resources/fichiersXMLPickupDelivery");
+        Path path = Paths.get(this.CHEMIN_DEFAULT);
         Files.copy(fichier.getInputStream(), path.resolve(Objects.requireNonNull(fichier.getOriginalFilename())));
     }
 
+
+    public Livraisons chargerLivraisonsDepuisXML(String cheminVersFichier) throws ParserConfigurationException, IOException, SAXException {
+        FabriquePaterne fabriqueLivraisons = new FabriquePaterne();
+        return fabriqueLivraisons.chargerDemande(CHEMIN_DEFAULT + cheminVersFichier);
+    }
 }
