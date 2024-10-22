@@ -36,10 +36,12 @@ public class GestionController {
 
     @GetMapping("/livraisons")
     public ResponseEntity<LivraisonsDTO> livraisons(
-            @RequestParam("cheminVersFichier") String cheminVersFichier
+            @RequestParam("etat") String stringEtat,
+            @RequestParam(value = "fichier", required = false ) MultipartFile fichier,
+            @RequestParam(value = "cheminVersFichier", required = false) String cheminVersFichier
     ) throws ParserConfigurationException, IOException, SAXException {
-        Livraisons livraisons = this.service.chargerLivraisonsDepuisXML(cheminVersFichier);
-
+        EtatType etatType = EtatType.valueOf(stringEtat);
+        Livraisons livraisons = this.service.chargerLivraisonsDepuisXML(etatType, fichier, cheminVersFichier);
         return ResponseEntity.ok(livraisons.toDTO());
     }
 

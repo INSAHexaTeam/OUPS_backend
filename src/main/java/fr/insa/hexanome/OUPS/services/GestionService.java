@@ -60,7 +60,29 @@ public class GestionService {
     }
 
 
-    public Livraisons chargerLivraisonsDepuisXML(String cheminVersFichier) throws ParserConfigurationException, IOException, SAXException {
-        return this.fabriquePaterne.chargerDemande(CHEMIN_DEFAULT + cheminVersFichier);
-    }
+    public Livraisons chargerLivraisonsDepuisXML(EtatType etat, MultipartFile fichier, String cheminVersFichier) throws ParserConfigurationException, IOException, SAXException {
+        while(true){
+            switch (etat){
+                case ENREGISTREMENT -> {
+                    if (fichier==null){
+                        return null;
+                    }
+                    this.enregistrement(fichier);
+                    return this.chargerLivraisonsDepuisXML(EtatType.CHARGEMENT, null, fichier.getOriginalFilename());
+                }
+                case CHARGEMENT -> {
+                    if (cheminVersFichier == null){
+                        return null;
+                    }
+                    return this.fabriquePaterne.chargerDemande(CHEMIN_DEFAULT + cheminVersFichier); // Fin
+                }
+                case ENREGISTREMENT_SIMPLE -> {
+                    if (fichier==null){
+                        return null;
+                    }
+                    this.enregistrement(fichier);
+                    return null; // Fin
+                }
+            }
+        }    }
 }
