@@ -70,9 +70,10 @@ public class FabriquePaterne {
         return this.carte;
     }
     public Livraisons chargerDemande(String cheminFichier) throws ParserConfigurationException, IOException, SAXException {
-        if(carte == null){
+        if(carte == null || this.carte.getIntersections().isEmpty()){
             throw new IllegalArgumentException("Carte non chargée");
         }
+        System.out.println(this.carte);
         File fichier = new File(cheminFichier);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
@@ -88,12 +89,12 @@ public class FabriquePaterne {
                 .intersection(intersectionEntrepot)
                 .heureDepart(nodeEntrepot.getAttributes().getNamedItem("heureDepart").getNodeValue())
                 .build();
-
         Livraisons livraisons = new Livraisons(entrepot);
+
         NodeList nodeListLivraisons = doc.getElementsByTagName("livraison");
         for(int i = 0; i < nodeListLivraisons.getLength(); i++){
             Node nodeLivraison = nodeListLivraisons.item(i);
-            Long idLivraison = Long.parseLong(nodeLivraison.getAttributes().getNamedItem("adresse").getNodeValue());
+            Long idLivraison = Long.parseLong(nodeLivraison.getAttributes().getNamedItem("adresseLivraison").getNodeValue());
             Intersection intersectionLivraison = this.carte.trouverIntersectionParId(idLivraison);
             Livraison livraison = Livraison.builder()
                     .adresseLivraison(intersectionLivraison)

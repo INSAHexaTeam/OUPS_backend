@@ -22,7 +22,11 @@ import java.util.Objects;
 public class GestionService {
 
     private final String CHEMIN_DEFAULT = "src/main/resources/fichiersXMLPickupDelivery/";
-    public GestionService() {}
+    private final FabriquePaterne fabriquePaterne;
+    public GestionService() {
+        this.fabriquePaterne = new FabriquePaterne();
+
+    }
 
     public Carte chargerCarteDepuisXML(EtatType etat, MultipartFile fichier, String cheminVersFichier) throws ParserConfigurationException, IOException, SAXException {
         while(true){
@@ -38,8 +42,7 @@ public class GestionService {
                     if (cheminVersFichier == null){
                         return null;
                     }
-                    FabriquePaterne fabriquePaterne = new FabriquePaterne();
-                    return fabriquePaterne.chargePlan(CHEMIN_DEFAULT + cheminVersFichier); // Fin
+                    return  this.fabriquePaterne.chargePlan(CHEMIN_DEFAULT + cheminVersFichier); // Fin
                 }
                 case ENREGISTREMENT_SIMPLE -> {
                     if (fichier==null){
@@ -58,7 +61,6 @@ public class GestionService {
 
 
     public Livraisons chargerLivraisonsDepuisXML(String cheminVersFichier) throws ParserConfigurationException, IOException, SAXException {
-        FabriquePaterne fabriqueLivraisons = new FabriquePaterne();
-        return fabriqueLivraisons.chargerDemande(CHEMIN_DEFAULT + cheminVersFichier);
+        return this.fabriquePaterne.chargerDemande(CHEMIN_DEFAULT + cheminVersFichier);
     }
 }

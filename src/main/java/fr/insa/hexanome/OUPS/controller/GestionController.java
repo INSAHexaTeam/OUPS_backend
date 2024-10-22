@@ -3,6 +3,7 @@ package fr.insa.hexanome.OUPS.controller;
 
 import fr.insa.hexanome.OUPS.model.Carte;
 import fr.insa.hexanome.OUPS.model.Livraisons;
+import fr.insa.hexanome.OUPS.model.dto.LivraisonsDTO;
 import fr.insa.hexanome.OUPS.services.EtatType;
 import fr.insa.hexanome.OUPS.services.GestionService;
 import org.apache.coyote.Response;
@@ -34,11 +35,12 @@ public class GestionController {
     }
 
     @GetMapping("/livraisons")
-    public ResponseEntity<Livraisons> livraisons(
+    public ResponseEntity<LivraisonsDTO> livraisons(
             @RequestParam("cheminVersFichier") String cheminVersFichier
     ) throws ParserConfigurationException, IOException, SAXException {
         Livraisons livraisons = this.service.chargerLivraisonsDepuisXML(cheminVersFichier);
-        return ResponseEntity.ok(livraisons);
+
+        return ResponseEntity.ok(livraisons.toDTO());
     }
 
 
