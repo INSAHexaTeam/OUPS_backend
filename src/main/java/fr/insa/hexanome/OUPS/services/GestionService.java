@@ -12,6 +12,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 @Service
 public class GestionService {
@@ -47,10 +51,9 @@ public class GestionService {
         }
     }
     private void enregistrement(MultipartFile fichier) throws IOException, FileNotFoundException {
-        String filePath = System.getProperty("user.dir") + this.CHEMIN_DEFAULT + File.separator + fichier.getOriginalFilename();
-        FileOutputStream fout = new FileOutputStream(filePath);
-        fout.write(fichier.getBytes());
-        fout.close();
+        //path to resources :
+        Path path = Paths.get("src/main/resources/fichiersXMLPickupDelivery");
+        Files.copy(fichier.getInputStream(), path.resolve(Objects.requireNonNull(fichier.getOriginalFilename())));
     }
 
 }
