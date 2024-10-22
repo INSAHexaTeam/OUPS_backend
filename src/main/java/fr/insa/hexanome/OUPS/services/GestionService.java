@@ -31,7 +31,7 @@ public class GestionService {
                         return null;
                     }
                     this.enregistrement(fichier);
-                    this.chargerCarteDepuisXML(EtatType.CHARGEMENT, null, fichier.getOriginalFilename());
+                    return this.chargerCarteDepuisXML(EtatType.CHARGEMENT, null, fichier.getOriginalFilename());
                 }
                 case CHARGEMENT -> {
                     if (cheminVersFichier == null){
