@@ -4,6 +4,7 @@ import fr.insa.hexanome.OUPS.model.Intersection;
 import fr.insa.hexanome.OUPS.model.Voisin;
 import fr.insa.hexanome.OUPS.services.FabriquePaterne;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,15 +12,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @SpringBootTest
 class FabriquePaterneTest {
 
-    private static FabriquePaterne fabriquePaterne;
+    private FabriquePaterne fabriquePaterne;
 
-    @BeforeAll
-    public static void telechargerXml() throws ParserConfigurationException, IOException, SAXException {
+    @BeforeEach
+    public void telechargerXml() throws ParserConfigurationException, IOException, SAXException {
         fabriquePaterne = new FabriquePaterne();
         // Code excecuté avant de tout
         String filePath = "src/main/resources/fichiersXMLPickupDelivery/petitPlan.xml";
@@ -27,9 +29,6 @@ class FabriquePaterneTest {
         System.out.println("XML a eté telechargé...");
     }
 
-// Demander si nous gérons l'erreur d'écriture d'un chemin inexistant dans les tests avec try-catch
-// Problèmes d'accès au fichier.
-// SAXException : Erreurs dans le format XML.
 
     @Test
     void verifierTousNoeuds() {
@@ -69,7 +68,26 @@ class FabriquePaterneTest {
         assertEquals(3, origineNoeud.getVoisins().size(), "tous les voisins ajoutés correctement");
     }
 
+    @Test
+    void verifierRouteFichier() {
+        //TODO Exception devrait avoir un message
+        IOException exception = assertThrows(IOException.class, () -> {
+            fabriquePaterne = new FabriquePaterne();
+            String filePath = "mauveseroute";
+            fabriquePaterne.chargePlan(filePath);
+        });
+        assertInstanceOf(FileNotFoundException.class, exception);
+    }
 
+    @Test
+    void verifierFormatXML() {
+        //TODO Exception devrait avoir un message
+        assertThrows(SAXException.class, () -> {
+            fabriquePaterne = new FabriquePaterne();
+            String filePath = "src/main/resources/fichiersXMLPickupDelivery/mauveseFichier.xml";
+            fabriquePaterne.chargePlan(filePath);
+        });
+    }
 
 }
 

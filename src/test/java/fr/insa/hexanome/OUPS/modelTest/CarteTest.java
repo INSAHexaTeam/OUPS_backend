@@ -3,6 +3,7 @@ package fr.insa.hexanome.OUPS.modelTest;
 import fr.insa.hexanome.OUPS.model.Intersection;
 import fr.insa.hexanome.OUPS.services.FabriquePaterne;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
@@ -15,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CarteTest {
 
-    private static FabriquePaterne fabriquePaterne;
+    private FabriquePaterne fabriquePaterne;
 
-    @BeforeAll
-    public static void telechargerXml() throws ParserConfigurationException, IOException, SAXException {
+    @BeforeEach
+    public void telechargerXml() throws ParserConfigurationException, IOException, SAXException {
         fabriquePaterne = new FabriquePaterne();
         // Code excecuté avant de tout
         String filePath = "src/main/resources/fichiersXMLPickupDelivery/petitPlan.xml";
