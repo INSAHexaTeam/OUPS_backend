@@ -1,0 +1,11 @@
+/Users/xwass/hexateam/OUPS_backend/src/main/java/fr/insa/hexanome/OUPS/OupsApplication.java
+/Users/xwass/hexateam/OUPS_backend/src/main/java/fr/insa/hexanome/OUPS/config.java
+/Users/xwass/hexateam/OUPS_backend/src/main/java/fr/insa/hexanome/OUPS/controller/GestionController.java
+/Users/xwass/hexateam/OUPS_backend/src/main/java/fr/insa/hexanome/OUPS/model/Carte.java
+/Users/xwass/hexateam/OUPS_backend/src/main/java/fr/insa/hexanome/OUPS/model/Entrepot.java
+/Users/xwass/hexateam/OUPS_backend/src/main/java/fr/insa/hexanome/OUPS/model/Intersection.java
+/Users/xwass/hexateam/OUPS_backend/src/main/java/fr/insa/hexanome/OUPS/model/Livraison.java
+/Users/xwass/hexateam/OUPS_backend/src/main/java/fr/insa/hexanome/OUPS/model/Voisin.java
+/Users/xwass/hexateam/OUPS_backend/src/main/java/fr/insa/hexanome/OUPS/services/EtatType.java
+/Users/xwass/hexateam/OUPS_backend/src/main/java/fr/insa/hexanome/OUPS/services/FabriquePaterne.java
+/Users/xwass/hexateam/OUPS_backend/src/main/java/fr/insa/hexanome/OUPS/services/GestionService.java
