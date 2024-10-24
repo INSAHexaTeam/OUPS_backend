@@ -34,7 +34,7 @@ public class GestionController {
         return ResponseEntity.ok(carte);
     }
 
-    @GetMapping("/livraisons")
+    @PostMapping("/livraisons")
     public ResponseEntity<LivraisonsDTO> livraisons(
             @RequestParam("etat") String stringEtat,
             @RequestParam(value = "fichier", required = false ) MultipartFile fichier,
