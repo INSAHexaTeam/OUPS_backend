@@ -6,7 +6,6 @@ import fr.insa.hexanome.OUPS.model.Livraisons;
 import fr.insa.hexanome.OUPS.model.dto.LivraisonsDTO;
 import fr.insa.hexanome.OUPS.services.EtatType;
 import fr.insa.hexanome.OUPS.services.GestionService;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +13,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/carte")
@@ -35,14 +36,23 @@ public class GestionController {
     }
 
     @PostMapping("/livraisons")
-    public ResponseEntity<LivraisonsDTO> livraisons(
+    public ResponseEntity<?> livraisons(
             @RequestParam("etat") String stringEtat,
             @RequestParam(value = "fichier", required = false ) MultipartFile fichier,
             @RequestParam(value = "cheminVersFichier", required = false) String cheminVersFichier
     ) throws ParserConfigurationException, IOException, SAXException {
         EtatType etatType = EtatType.valueOf(stringEtat);
-        Livraisons livraisons = this.service.chargerLivraisonsDepuisXML(etatType, fichier, cheminVersFichier);
-        return ResponseEntity.ok(livraisons.toDTO());
+        try {
+            Livraisons livraisons = this.service.chargerLivraisonsDepuisXML(etatType, fichier, cheminVersFichier);
+            return ResponseEntity.ok(livraisons.toDTO());
+        } catch (Exception e) {
+            // Créer un objet de réponse d'erreur personnalisé contenant le nom de l'exception et le message
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getClass().getSimpleName()); // Nom de l'exception
+            errorResponse.put("message", e.getMessage()); // Message de l'exception
+
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
     }
 
 
