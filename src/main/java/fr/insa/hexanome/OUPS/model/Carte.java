@@ -1,5 +1,8 @@
 package fr.insa.hexanome.OUPS.model;
 
+import fr.insa.hexanome.OUPS.model.dto.CarteDTO;
+import fr.insa.hexanome.OUPS.model.dto.IntersectionDTO;
+import fr.insa.hexanome.OUPS.model.dto.VoisinDTO;
 import jakarta.persistence.Tuple;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,5 +33,31 @@ public class Carte {
             }
         }
         throw new IllegalArgumentException("Intersection non trouvée");
+    }
+    public CarteDTO toDTO(){
+
+        ArrayList<IntersectionDTO> intersectionDTOS = new ArrayList<>();
+
+        for (Intersection i : this.intersections) {
+            ArrayList<VoisinDTO> voisinsDTOS = new ArrayList<>();
+            for(Voisin v: i.getVoisins()){
+                v.getDestination().setVoisins(null);
+                VoisinDTO voisinDTO = VoisinDTO.builder()
+                        .destination(v.getDestination())
+                        .longueur(v.getLongueur())
+                        .nomRue(v.getNomRue())
+                        .build();
+                voisinsDTOS.add(voisinDTO);
+            }
+            IntersectionDTO intersectionDTO = IntersectionDTO.builder()
+                    .voisins(voisinsDTOS)
+                    .longitude(i.getLongitude())
+                    .latitude(i.getLatitude())
+                    .build();
+            intersectionDTOS.add(intersectionDTO);
+        }
+        return CarteDTO.builder()
+                .intersections(intersectionDTOS)
+                .build();
     }
 }
