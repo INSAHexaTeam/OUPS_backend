@@ -33,6 +33,7 @@ public class GestionService {
     }
 
     public Carte chargerCarteDepuisXML(EtatType etat, MultipartFile fichier, String cheminVersFichier) throws ParserConfigurationException, IOException, SAXException {
+        //todo : il faut vider les livraisons si on change la carte
         while(true){
             switch (etat){
                 case ENREGISTREMENT -> {
