@@ -84,20 +84,49 @@ public class GestionService {
             }
         }
     }
+    
+    //Secure XML upload
     private void enregistrement(MultipartFile fichier) throws IOException {
-        //Extension fichier doit être .xml
-        if (!Objects.requireNonNull(fichier.getOriginalFilename()).endsWith(".xml")){
+    // Vérification de l'extension du fichier doit être .xml
+        if (!Objects.requireNonNull(fichier.getOriginalFilename()).toLowerCase().endsWith(".xml")) {
             throw new FileExtension("Le fichier n'est pas un fichier XML");
         }
-        //TODO @Wassila Reinforce tests by checking the content
 
+        // Limiter la taille du fichier pour éviter des attaques DoS
+        if (fichier.getSize() > 20 * 1024 * 1024) { //20MB
+            throw new IOException("Le fichier est trop volumineux");
+        }
+
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        
+            // Désactiver les fonctionnalités potentiellement dangereuses pour prévenir les attaques XXE
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+            // Vérification du contenu et structure XML
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            builder.parse(fichier.getInputStream());
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new FileExtension("Le contenu du fichier n'est pas un XML valide");
+        }
+
+        // Chemin sécurisé pour enregistrer le fichier
         Path path = Paths.get(this.CHEMIN_DEFAULT);
-        try{
-            Files.copy(fichier.getInputStream(), path.resolve(Objects.requireNonNull(fichier.getOriginalFilename())));
-        }catch (FileAlreadyExistsException e){
-            Files.delete(path.resolve(Objects.requireNonNull(fichier.getOriginalFilename())));
-            Files.copy(fichier.getInputStream(), path.resolve(Objects.requireNonNull(fichier.getOriginalFilename())));
+        Path destinationFile = path.resolve(Objects.requireNonNull(fichier.getOriginalFilename())).normalize();
 
+        // Vérifier si le chemin est dans le répertoire souhaité pour éviter les attaques path traversal
+        if (!destinationFile.startsWith(path)) {
+            throw new SecurityException("tentative d'attaque detectée");
+        }
+
+        try {
+            Files.copy(fichier.getInputStream(), destinationFile);
+        } catch (FileAlreadyExistsException e) {
+            Files.delete(destinationFile);
+            Files.copy(fichier.getInputStream(), destinationFile);
         }
     }
 }
