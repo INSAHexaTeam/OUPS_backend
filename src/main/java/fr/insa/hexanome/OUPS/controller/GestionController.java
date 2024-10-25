@@ -14,6 +14,8 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/carte")
@@ -35,14 +37,22 @@ public class GestionController {
     }
 
     @PostMapping("/livraisons")
-    public ResponseEntity<LivraisonsDTO> livraisons(
+    public ResponseEntity<?> livraisons(
             @RequestParam("etat") String stringEtat,
             @RequestParam(value = "fichier", required = false ) MultipartFile fichier,
             @RequestParam(value = "cheminVersFichier", required = false) String cheminVersFichier
     ) throws ParserConfigurationException, IOException, SAXException {
-        EtatType etatType = EtatType.valueOf(stringEtat);
-        Livraisons livraisons = this.service.chargerLivraisonsDepuisXML(etatType, fichier, cheminVersFichier);
-        return ResponseEntity.ok(livraisons.toDTO());
+        try {
+            EtatType etatType = EtatType.valueOf(stringEtat);
+            Livraisons livraisons = this.service.chargerLivraisonsDepuisXML(etatType, fichier, cheminVersFichier);
+            return ResponseEntity.ok(livraisons.toDTO());
+        }
+        catch (Exception e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "true");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(400).body(errorResponse);
+        }
     }
 
 
