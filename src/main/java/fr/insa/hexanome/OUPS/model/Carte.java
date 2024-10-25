@@ -40,28 +40,26 @@ public class Carte {
 
         for (Intersection i : this.intersections) {
             ArrayList<VoisinDTO> voisinsDTOS = new ArrayList<>();
-            if(i.getVoisins() == null)
-            {
+            if(i.getVoisins() == null){
                 continue;
             }
             for(Voisin v: i.getVoisins()){
-                IntersectionDTO voisinIntersection = IntersectionDTO.builder()
+                IntersectionDTO voisin = IntersectionDTO.builder()
                         .id(v.getDestination().getId())
                         .latitude(v.getDestination().getLatitude())
                         .longitude(v.getDestination().getLongitude())
                         .voisins(null)
                         .build();
-
                 VoisinDTO voisinDTO = VoisinDTO.builder()
-                        .destination(voisinIntersection)
+                        .destination(voisin)
                         .longueur(v.getLongueur())
                         .nomRue(v.getNomRue())
                         .build();
                 voisinsDTOS.add(voisinDTO);
             }
             IntersectionDTO intersectionDTO = IntersectionDTO.builder()
-                    .voisins(voisinsDTOS)
                     .id(i.getId())
+                    .voisins(voisinsDTOS)
                     .longitude(i.getLongitude())
                     .latitude(i.getLatitude())
                     .build();
