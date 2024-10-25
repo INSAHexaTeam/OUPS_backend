@@ -38,4 +38,14 @@ public class Intersection {
         this.voisins.add(voisin);
     }
 
+    public Voisin trouverVoisin(long idIntersection){
+        for (Voisin voisin : voisins) {
+            if (voisin.getDestination().getId() == idIntersection) {
+                return voisin;
+            }
+        }
+        return null;
+    }
+
+
 }
