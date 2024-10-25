@@ -1,14 +1,12 @@
 package fr.insa.hexanome.OUPS.controller;
 
 
-import fr.insa.hexanome.OUPS.model.Carte;
-import fr.insa.hexanome.OUPS.model.Intersection;
-import fr.insa.hexanome.OUPS.model.Livraisons;
-import fr.insa.hexanome.OUPS.model.Voisin;
+import fr.insa.hexanome.OUPS.model.*;
 import fr.insa.hexanome.OUPS.model.dto.CarteDTO;
 import fr.insa.hexanome.OUPS.model.dto.IntersectionDTO;
 import fr.insa.hexanome.OUPS.model.dto.LivraisonsDTO;
 import fr.insa.hexanome.OUPS.model.dto.VoisinDTO;
+import fr.insa.hexanome.OUPS.services.CalculItineraire;
 import fr.insa.hexanome.OUPS.services.EtatType;
 import fr.insa.hexanome.OUPS.services.GestionService;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +16,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -58,6 +57,26 @@ public class GestionController {
 
             return ResponseEntity.badRequest().body(errorResponse);
         }
+    }
+
+
+    //todo : peut être retourné un objet Tournée (pas encore ajouté au modèle)
+    @PostMapping("/calculerItineraire")
+    public  ResponseEntity<LivraisonsDTO>
+    calculerItineraire(
+            @RequestBody LivraisonsDTO request
+    ) throws ParserConfigurationException, IOException, SAXException {
+        Entrepot entrepot = Entrepot.builder()
+                .heureDepart(request.getEntrepot().getHeureDepart())
+                .intersection(request.getEntrepot().getIntersection())
+                .build();
+        Livraisons livraisons = request.toLivraison();
+        CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
+                .entrepots(entrepot)
+                .pointDeLivraisons(livraisons)
+                .build();
+        Livraisons livraisonsAleatoires = calculItineraireAleatoire.getPointsDeLivraisonAleatoire();
+        return ResponseEntity.ok(livraisonsAleatoires.toDTO());
     }
 
 

@@ -11,6 +11,7 @@ import java.util.List;
 
 @Data
 @Builder
+@NoArgsConstructor
 public class Intersection {
     private Long id;
     private Double latitude;

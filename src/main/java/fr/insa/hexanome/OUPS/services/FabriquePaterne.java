@@ -89,7 +89,9 @@ public class FabriquePaterne {
                 .intersection(intersectionEntrepot)
                 .heureDepart(nodeEntrepot.getAttributes().getNamedItem("heureDepart").getNodeValue())
                 .build();
-        Livraisons livraisons = new Livraisons(entrepot);
+        Livraisons livraisons = Livraisons.builder()
+                .entrepot(entrepot)
+                .build();
 
         NodeList nodeListLivraisons = doc.getElementsByTagName("livraison");
         for(int i = 0; i < nodeListLivraisons.getLength(); i++){
@@ -97,7 +99,7 @@ public class FabriquePaterne {
             Long idLivraison = Long.parseLong(nodeLivraison.getAttributes().getNamedItem("adresseLivraison").getNodeValue());
             Intersection intersectionLivraison = this.carte.trouverIntersectionParId(idLivraison);
             Livraison livraison = Livraison.builder()
-                    .adresseLivraison(intersectionLivraison)
+                    .intersection(intersectionLivraison)
                     .build();
             livraisons.add(livraison);
         }

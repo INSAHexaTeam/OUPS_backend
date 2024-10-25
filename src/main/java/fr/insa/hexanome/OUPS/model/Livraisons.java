@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
+@Builder
 public class Livraisons extends ArrayList<Livraison> {
     private Entrepot entrepot;
 
