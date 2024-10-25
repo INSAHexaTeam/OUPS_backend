@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 public class VoisinDTO {
-    private Intersection destination;
+    private IntersectionDTO destination;
     private String nomRue;
     private Double longueur;
 

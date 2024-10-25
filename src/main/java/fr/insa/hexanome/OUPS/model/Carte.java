@@ -42,8 +42,14 @@ public class Carte {
             ArrayList<VoisinDTO> voisinsDTOS = new ArrayList<>();
             for(Voisin v: i.getVoisins()){
                 v.getDestination().setVoisins(null);
+                IntersectionDTO voisin = IntersectionDTO.builder()
+                        .id(v.getDestination().getId())
+                        .latitude(v.getDestination().getLatitude())
+                        .longitude(v.getDestination().getLongitude())
+                        .voisins(null)
+                        .build();
                 VoisinDTO voisinDTO = VoisinDTO.builder()
-                        .destination(v.getDestination())
+                        .destination(voisin)
                         .longueur(v.getLongueur())
                         .nomRue(v.getNomRue())
                         .build();
