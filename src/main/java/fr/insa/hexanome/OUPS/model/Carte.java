@@ -44,7 +44,6 @@ public class Carte {
                 continue;
             }
             for(Voisin v: i.getVoisins()){
-                v.getDestination().setVoisins(null);
                 IntersectionDTO voisin = IntersectionDTO.builder()
                         .id(v.getDestination().getId())
                         .latitude(v.getDestination().getLatitude())
