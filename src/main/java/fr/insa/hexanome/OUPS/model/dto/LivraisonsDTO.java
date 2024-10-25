@@ -10,7 +10,7 @@ import java.util.List;
 public class LivraisonsDTO {
     private Entrepot entrepot;
     private List<Livraison> livraisons;
-
+    private int coursier;
     public LivraisonsDTO(Entrepot entrepot, List<Livraison> livraisons) {
         this.entrepot = entrepot;
         this.livraisons = livraisons;

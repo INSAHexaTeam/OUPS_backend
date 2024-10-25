@@ -2,10 +2,8 @@ package fr.insa.hexanome.OUPS.controller;
 
 
 import fr.insa.hexanome.OUPS.model.*;
-import fr.insa.hexanome.OUPS.model.dto.CarteDTO;
-import fr.insa.hexanome.OUPS.model.dto.IntersectionDTO;
-import fr.insa.hexanome.OUPS.model.dto.LivraisonsDTO;
-import fr.insa.hexanome.OUPS.model.dto.VoisinDTO;
+import fr.insa.hexanome.OUPS.model.dto.*;
+import fr.insa.hexanome.OUPS.model.exception.Tournee;
 import fr.insa.hexanome.OUPS.services.CalculItineraire;
 import fr.insa.hexanome.OUPS.services.EtatType;
 import fr.insa.hexanome.OUPS.services.GestionService;
@@ -62,10 +60,11 @@ public class GestionController {
 
     //todo : peut être retourné un objet Tournée (pas encore ajouté au modèle)
     @PostMapping("/calculerItineraire")
-    public  ResponseEntity<LivraisonsDTO>
+    public  ResponseEntity<TourneeDTO>
     calculerItineraire(
             @RequestBody LivraisonsDTO request
     ) throws ParserConfigurationException, IOException, SAXException {
+
         Entrepot entrepot = Entrepot.builder()
                 .heureDepart(request.getEntrepot().getHeureDepart())
                 .intersection(request.getEntrepot().getIntersection())
@@ -75,9 +74,29 @@ public class GestionController {
                 .entrepots(entrepot)
                 .pointDeLivraisons(livraisons)
                 .build();
-        Livraisons livraisonsAleatoires = calculItineraireAleatoire.getPointsDeLivraisonAleatoire();
+        Tournee livraisonsAleatoires = calculItineraireAleatoire.getPointsDeLivraisonAleatoire(request.getCoursier());
         return ResponseEntity.ok(livraisonsAleatoires.toDTO());
     }
+    //todo : peut être retourné un objet Tournée (pas encore ajouté au modèle)
+    @PostMapping("/calculerItineraireCluster")
+    public  ResponseEntity<TourneeDTO>
+    calculerItineraireCluster(
+            @RequestBody LivraisonsDTO request
+    ) throws ParserConfigurationException, IOException, SAXException {
+
+        Entrepot entrepot = Entrepot.builder()
+                .heureDepart(request.getEntrepot().getHeureDepart())
+                .intersection(request.getEntrepot().getIntersection())
+                .build();
+        Livraisons livraisons = request.toLivraison();
+        CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
+                .entrepots(entrepot)
+                .pointDeLivraisons(livraisons)
+                .build();
+        Tournee livraisonsAleatoires = calculItineraireAleatoire.getPointsDeLivraisonAleatoireCluster(request.getCoursier());
+        return ResponseEntity.ok(livraisonsAleatoires.toDTO());
+    }
+
 
 
 }
