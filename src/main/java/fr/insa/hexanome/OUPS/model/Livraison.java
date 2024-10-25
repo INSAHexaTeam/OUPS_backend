@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * (Objet métier) Permet de représenter une livraison (un point à livrer)
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

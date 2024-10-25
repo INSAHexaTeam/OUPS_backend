@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
-
+/**
+ * (DATA TO OBJECT) Cette classe permet d'afficher une Intersection au frontend
+ */
 @Data
 @Builder
 public class IntersectionDTO {

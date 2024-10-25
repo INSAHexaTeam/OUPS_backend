@@ -18,6 +18,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * (Service) (SingletonPattern) (FabriquePattern) permet d'instancier depuis une demande de chargement une carte et une livraison.
+ * L'instanciation de ces objets étant complexe, on décide de créer une classe reponsable de leurs instanciation
+ */
 @Data
 @AllArgsConstructor
 @Builder
@@ -27,6 +31,15 @@ public class FabriquePaterne {
     public FabriquePaterne() {
         this.carte = new Carte();
     }
+
+    /**
+     * Permet de charger un plan depuis un fichier XML
+     * @param cheminFichier Chemin vers le fichier a charger
+     * @return Une carte Chargée depuis la demande
+     * @throws ParserConfigurationException Si le XML est mal formé, une erreur est throws
+     * @throws IOException Si le fichier n'est pas trouvable
+     * @throws SAXException Erreur du XML parser
+     */
     public Carte chargePlan(String cheminFichier) throws ParserConfigurationException, IOException, SAXException {
         this.carte = new Carte();
         File fichier = new File(cheminFichier);
@@ -69,6 +82,15 @@ public class FabriquePaterne {
         }
         return this.carte;
     }
+
+    /**
+     * Permet de charger une demande depuis un fichier XML
+     * @param cheminFichier Chemin vers le fichier a charger
+     * @return Une carte Chargée depuis la demande
+     * @throws ParserConfigurationException Si le XML est mal formé, une erreur est throws
+     * @throws IOException Si le fichier n'est pas trouvable
+     * @throws SAXException Erreur du XML parser
+     */
     public Livraisons chargerDemande(String cheminFichier) throws ParserConfigurationException, IOException, SAXException {
         if(carte == null || this.carte.getIntersections().isEmpty()){
             throw new IllegalArgumentException("Carte non chargée");

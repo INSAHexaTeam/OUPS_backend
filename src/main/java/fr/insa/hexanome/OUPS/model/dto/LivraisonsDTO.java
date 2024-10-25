@@ -5,6 +5,10 @@ import fr.insa.hexanome.OUPS.model.Livraison;
 import lombok.Data;
 
 import java.util.List;
+
+/**
+ * (DATA TO OBJECT) Cette classe permet d'afficher des Livraisons au frontend
+ */
 @Data
 public class LivraisonsDTO {
     private Entrepot entrepot;

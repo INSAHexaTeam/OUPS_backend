@@ -15,6 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * (Objet métier) permet la manipulation de données de type carte
+ */
 @Data
 @AllArgsConstructor
 @Builder
@@ -23,9 +26,21 @@ public class Carte {
     public Carte() {
         this.intersections = new ArrayList<>();
     }
+
+    /**
+     * Cette classe permet d'ajouter une intersection a la liste des intersections de la carte
+     * @param intersection objet à ajouter
+     */
     public void ajouterIntersection(Intersection intersection) {
         this.intersections.add(intersection);
     }
+
+    /**
+     * trouver une intersection dans la liste des intersections de la carte
+     * @param id Id de l'objet à chercher dans la liste
+     * @return Intersection trouvée
+     * @throws IllegalArgumentException throws une erreur si l'intersection n'a pas été trouvée. Cela signifie que le plan à mal été chargé
+     */
     public Intersection trouverIntersectionParId(Long id) {
         for (Intersection intersection : this.intersections) {
             if (Objects.equals(intersection.getId(), id)) {
@@ -34,6 +49,11 @@ public class Carte {
         }
         throw new IllegalArgumentException("Intersection non trouvée");
     }
+
+    /**
+     * Transforme l'objet carte en DTO
+     * @return la Carte transformée en CarteDTO
+     */
     public CarteDTO toDTO(){
 
         ArrayList<IntersectionDTO> intersectionDTOS = new ArrayList<>();

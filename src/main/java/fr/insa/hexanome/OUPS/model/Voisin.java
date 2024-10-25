@@ -5,6 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.List;
+
+/**
+ * (Objet métier) Représentation des données Voisins
+ * Permet à des intersections de stocker une liste de voisins
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
