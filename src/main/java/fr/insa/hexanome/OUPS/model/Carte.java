@@ -40,6 +40,9 @@ public class Carte {
 
         for (Intersection i : this.intersections) {
             ArrayList<VoisinDTO> voisinsDTOS = new ArrayList<>();
+            if(i.getVoisins() == null){
+                continue;
+            }
             for(Voisin v: i.getVoisins()){
                 v.getDestination().setVoisins(null);
                 IntersectionDTO voisin = IntersectionDTO.builder()
