@@ -58,6 +58,7 @@ public class Carte {
                 voisinsDTOS.add(voisinDTO);
             }
             IntersectionDTO intersectionDTO = IntersectionDTO.builder()
+                    .id(i.getId())
                     .voisins(voisinsDTOS)
                     .longitude(i.getLongitude())
                     .latitude(i.getLatitude())
