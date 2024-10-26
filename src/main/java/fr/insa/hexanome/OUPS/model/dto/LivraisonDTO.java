@@ -1,16 +1,15 @@
 package fr.insa.hexanome.OUPS.model.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-@Builder
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TourneeDTO {
-    public List<IntersectionDTO> chemin;
+public class LivraisonDTO {
+    private IntersectionDTO intersection;
+    private boolean estUneLivraison;
 }

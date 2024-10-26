@@ -1,5 +1,6 @@
 package fr.insa.hexanome.OUPS.model.dto;
 
+import fr.insa.hexanome.OUPS.model.ParcoursDeLivraison;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TourneeDTO {
-    public List<IntersectionDTO> chemin;
+public class TourneeLivraisonDTO {
+    public List<ParcoursDeLivraisonDTO> livraisons;
 }

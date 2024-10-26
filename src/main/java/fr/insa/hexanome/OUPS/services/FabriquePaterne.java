@@ -16,7 +16,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -69,11 +68,11 @@ public class FabriquePaterne {
         }
         return this.carte;
     }
-    public Livraisons chargerDemande(String cheminFichier) throws ParserConfigurationException, IOException, SAXException {
+    public DemandeLivraisons chargerDemande(String cheminFichier) throws ParserConfigurationException, IOException, SAXException {
         if(carte == null || this.carte.getIntersections().isEmpty()){
             throw new IllegalArgumentException("Carte non chargée");
         }
-        System.out.println(this.carte);
+        //System.out.println(this.carte);
         File fichier = new File(cheminFichier);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
@@ -89,7 +88,7 @@ public class FabriquePaterne {
                 .intersection(intersectionEntrepot)
                 .heureDepart(nodeEntrepot.getAttributes().getNamedItem("heureDepart").getNodeValue())
                 .build();
-        Livraisons livraisons = Livraisons.builder()
+        DemandeLivraisons demandeLivraisons = DemandeLivraisons.builder()
                 .entrepot(entrepot)
                 .build();
 
@@ -101,8 +100,8 @@ public class FabriquePaterne {
             Livraison livraison = Livraison.builder()
                     .intersection(intersectionLivraison)
                     .build();
-            livraisons.add(livraison);
+            demandeLivraisons.add(livraison);
         }
-        return livraisons;
+        return demandeLivraisons;
     }
 }

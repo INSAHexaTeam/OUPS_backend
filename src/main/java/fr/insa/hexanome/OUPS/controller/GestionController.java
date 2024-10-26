@@ -3,7 +3,6 @@ package fr.insa.hexanome.OUPS.controller;
 
 import fr.insa.hexanome.OUPS.model.*;
 import fr.insa.hexanome.OUPS.model.dto.*;
-import fr.insa.hexanome.OUPS.model.exception.Tournee;
 import fr.insa.hexanome.OUPS.services.CalculItineraire;
 import fr.insa.hexanome.OUPS.services.EtatType;
 import fr.insa.hexanome.OUPS.services.GestionService;
@@ -14,7 +13,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,6 +23,8 @@ public class GestionController {
         this.service = service;
     }
 
+    private Carte carte;
+
 
     @PostMapping("/charger")
     public ResponseEntity<CarteDTO> charger(
@@ -33,8 +33,9 @@ public class GestionController {
             @RequestParam(value = "cheminVersFichier", required = false) String cheminVersFichier
     ) throws ParserConfigurationException, IOException, SAXException {
         EtatType etatType = EtatType.valueOf(stringEtat);
-        Carte carte = this.service.chargerCarteDepuisXML(etatType, fichier, cheminVersFichier);
-        return ResponseEntity.ok(carte.toDTO());
+        Carte carteRequest = this.service.chargerCarteDepuisXML(etatType, fichier, cheminVersFichier);
+        this.carte = carteRequest;
+        return ResponseEntity.ok(carteRequest.toDTO());
     }
 
     @PostMapping("/livraisons")
@@ -45,8 +46,8 @@ public class GestionController {
     ) throws ParserConfigurationException, IOException, SAXException {
         EtatType etatType = EtatType.valueOf(stringEtat);
         try {
-            Livraisons livraisons = this.service.chargerLivraisonsDepuisXML(etatType, fichier, cheminVersFichier);
-            return ResponseEntity.ok(livraisons.toDTO());
+            DemandeLivraisons demandeLivraisons = this.service.chargerLivraisonsDepuisXML(etatType, fichier, cheminVersFichier);
+            return ResponseEntity.ok(demandeLivraisons.toDTO());
         } catch (Exception e) {
             // Créer un objet de réponse d'erreur personnalisé contenant le nom de l'exception et le message
             Map<String, String> errorResponse = new HashMap<>();
@@ -59,43 +60,67 @@ public class GestionController {
 
 
     //todo : peut être retourné un objet Tournée (pas encore ajouté au modèle)
-    @PostMapping("/calculerItineraire")
-    public  ResponseEntity<TourneeDTO>
+//    @PostMapping("/calculerItineraireAleatoire")
+//    public  ResponseEntity<TourneeLivraisonDTO>
+//    calculerItineraireAleatoire(
+//            @RequestBody DemandeLivraisonsDTO request
+//    ) throws ParserConfigurationException, IOException, SAXException {
+//
+//        Entrepot entrepot = Entrepot.builder()
+//                .heureDepart(request.getEntrepot().getHeureDepart())
+//                .intersection(request.getEntrepot().getIntersection())
+//                .build();
+//        DemandeLivraisons demandeLivraisons = request.toLivraison();
+//        CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
+//                .entrepots(entrepot)
+//                .pointDeLivraisons(demandeLivraisons)
+//                .build();
+//        TourneeLivraison livraisonsAleatoires = calculItineraireAleatoire.getPointsDeLivraisonAleatoire(request.getCoursier());
+//        return ResponseEntity.ok(livraisonsAleatoires.toDTO());
+//    }
+//
+//    //todo : peut être retourné un objet Tournée (pas encore ajouté au modèle)
+//    @PostMapping("/calculerItineraireCluster")
+//    public  ResponseEntity<TourneeLivraisonDTO>
+//    calculerItineraireCluster(
+//            @RequestBody DemandeLivraisonsDTO request
+//    ) throws ParserConfigurationException, IOException, SAXException {
+//
+//        Entrepot entrepot = Entrepot.builder()
+//                .heureDepart(request.getEntrepot().getHeureDepart())
+//                .intersection(request.getEntrepot().getIntersection())
+//                .build();
+//        DemandeLivraisons demandeLivraisons = request.toLivraison();
+//        CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
+//                .entrepots(entrepot)
+//                .pointDeLivraisons(demandeLivraisons)
+//                .build();
+//        TourneeLivraison livraisonsAleatoires = calculItineraireAleatoire.getPointsDeLivraisonAleatoireCluster(request.getCoursier());
+//        return ResponseEntity.ok(livraisonsAleatoires.toDTO());
+//    }
+
+    @PostMapping("/calculerItineraireClusterOptimal")
+    public  ResponseEntity<TourneeLivraisonDTO>
     calculerItineraire(
-            @RequestBody LivraisonsDTO request
+            @RequestBody DemandeLivraisonsDTO request
     ) throws ParserConfigurationException, IOException, SAXException {
 
         Entrepot entrepot = Entrepot.builder()
                 .heureDepart(request.getEntrepot().getHeureDepart())
-                .intersection(request.getEntrepot().getIntersection())
+                .intersection(Intersection.fromDTO(request.getEntrepot().getIntersection()))
                 .build();
-        Livraisons livraisons = request.toLivraison();
-        CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
-                .entrepots(entrepot)
-                .pointDeLivraisons(livraisons)
-                .build();
-        Tournee livraisonsAleatoires = calculItineraireAleatoire.getPointsDeLivraisonAleatoire(request.getCoursier());
-        return ResponseEntity.ok(livraisonsAleatoires.toDTO());
-    }
-    //todo : peut être retourné un objet Tournée (pas encore ajouté au modèle)
-    @PostMapping("/calculerItineraireCluster")
-    public  ResponseEntity<TourneeDTO>
-    calculerItineraireCluster(
-            @RequestBody LivraisonsDTO request
-    ) throws ParserConfigurationException, IOException, SAXException {
 
-        Entrepot entrepot = Entrepot.builder()
-                .heureDepart(request.getEntrepot().getHeureDepart())
-                .intersection(request.getEntrepot().getIntersection())
-                .build();
-        Livraisons livraisons = request.toLivraison();
+        DemandeLivraisons demandeLivraisons = request.toDemandeLivraisons();
         CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
                 .entrepots(entrepot)
-                .pointDeLivraisons(livraisons)
+                .pointDeLivraisons(demandeLivraisons)
                 .build();
-        Tournee livraisonsAleatoires = calculItineraireAleatoire.getPointsDeLivraisonAleatoireCluster(request.getCoursier());
-        return ResponseEntity.ok(livraisonsAleatoires.toDTO());
+        TourneeLivraison livraisonsOptimales = calculItineraireAleatoire.getPointsDeLivraisonClusterOptimise(request.getCoursier(),carte.getIntersectionsMap());
+        System.out.println(livraisonsOptimales);
+        return ResponseEntity.ok(livraisonsOptimales.toDTO());
     }
+
+
 
 
 

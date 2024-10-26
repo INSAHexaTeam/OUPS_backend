@@ -1,6 +1,5 @@
-package fr.insa.hexanome.OUPS.model.exception;
+package fr.insa.hexanome.OUPS.model;
 
-import fr.insa.hexanome.OUPS.model.Livraisons;
 import fr.insa.hexanome.OUPS.model.dto.TourneeDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,12 +15,13 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class Tournee {
     //chaque élément de la liste correspond à un coursier
-    public List<Livraisons> livraisons;
+    public List<Intersection> chemin;
 
     public TourneeDTO toDTO() {
         return TourneeDTO.builder()
                 //transforme chaque livraison de la liste en livraisonDTO
-                .livraisons(livraisons.stream().map(Livraisons::toDTO).collect(Collectors.toList()))
+                .chemin(chemin.stream().map(Intersection::toDTO).collect(Collectors.toList()))
                 .build();
     }
+
 }
