@@ -1,7 +1,10 @@
 package fr.insa.hexanome.OUPS.services;
 
-import fr.insa.hexanome.OUPS.model.*;
-import fr.insa.hexanome.OUPS.model.TourneeLivraison;
+import fr.insa.hexanome.OUPS.model.carte.Entrepot;
+import fr.insa.hexanome.OUPS.model.carte.Intersection;
+import fr.insa.hexanome.OUPS.model.carte.Livraison;
+import fr.insa.hexanome.OUPS.model.carte.Voisin;
+import fr.insa.hexanome.OUPS.model.tournee.*;
 import lombok.Builder;
 import lombok.Data;
 
@@ -140,7 +143,7 @@ private void verifierCarte(Map<Long, Intersection> carte) {
 
         // Clustering des livraisons (code existant...)
         List<ClusterableLivraison> clusterableLivraisons = new ArrayList<>();
-        for (Livraison livraison : pointDeLivraisons) {
+        for (Livraison livraison : this.pointDeLivraisons) {
             clusterableLivraisons.add(new ClusterableLivraison(livraison));
         }
 
@@ -148,15 +151,14 @@ private void verifierCarte(Map<Long, Intersection> carte) {
         RandomGenerator random = new org.apache.commons.math3.random.JDKRandomGenerator(42); // Graine fixe
         KMeansPlusPlusClusterer<ClusterableLivraison> clusterer =
                 new KMeansPlusPlusClusterer<>(nbCoursier, 1000, new EuclideanDistance(), random);
-        List<CentroidCluster<ClusterableLivraison>> clusters = clusterer.cluster(clusterableLivraisons);
-
+        List<CentroidCluster<ClusterableLivraison>> clusters = clusterer.cluster(clusterableLivraisons); //TODO Possiblement un model
         // Pour chaque groupe...
         List<ParcoursDeLivraison> parcours = new ArrayList<>();
         for (Cluster<ClusterableLivraison> cluster : clusters) {
             // Récupérer les livraisons du cluster
             List<Livraison> livraisonsCluster = cluster.getPoints().stream()
                     .map(ClusterableLivraison::getLivraison)
-                    .collect(Collectors.toList());
+                    .toList();
 
             // Optimiser l'ordre des livraisons avec l'algorithme du plus proche voisin
             List<Livraison> livraisonsOrdonnees = new ArrayList<>();
@@ -166,11 +168,14 @@ private void verifierCarte(Map<Long, Intersection> carte) {
             Intersection pointCourant = entrepots.getIntersection();
 
             // Tant qu'il reste des livraisons à faire
+
+            //public void trouverLeMeilleurItineraireDunCluster
             while (!nonVisitees.isEmpty()) {
                 // Trouver la livraison la plus proche du point courant
                 double distanceMin = Double.MAX_VALUE;
                 Livraison plusProche = null;
 
+                //public void trouverPlusCourtCheminDepuisPointCourant
                 for (Livraison livraison : nonVisitees) {
                     List<Intersection> chemin = trouverCheminEntreDeux(
                             pointCourant,

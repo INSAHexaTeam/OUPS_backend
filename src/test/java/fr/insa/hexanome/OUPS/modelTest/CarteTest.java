@@ -1,15 +1,13 @@
 package fr.insa.hexanome.OUPS.modelTest;
 
-import fr.insa.hexanome.OUPS.model.Intersection;
+import fr.insa.hexanome.OUPS.model.carte.Intersection;
 import fr.insa.hexanome.OUPS.services.FabriquePaterne;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

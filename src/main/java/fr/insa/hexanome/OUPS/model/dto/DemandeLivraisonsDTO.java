@@ -1,8 +1,8 @@
 package fr.insa.hexanome.OUPS.model.dto;
 
-import fr.insa.hexanome.OUPS.model.Entrepot;
-import fr.insa.hexanome.OUPS.model.Livraison;
-import fr.insa.hexanome.OUPS.model.DemandeLivraisons;
+import fr.insa.hexanome.OUPS.model.carte.Entrepot;
+import fr.insa.hexanome.OUPS.model.carte.Livraison;
+import fr.insa.hexanome.OUPS.model.tournee.DemandeLivraisons;
 import lombok.Builder;
 import lombok.Data;
 

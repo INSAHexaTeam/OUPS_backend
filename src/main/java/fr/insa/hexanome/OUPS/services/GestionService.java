@@ -1,7 +1,7 @@
 package fr.insa.hexanome.OUPS.services;
 
-import fr.insa.hexanome.OUPS.model.Carte;
-import fr.insa.hexanome.OUPS.model.DemandeLivraisons;
+import fr.insa.hexanome.OUPS.model.carte.Carte;
+import fr.insa.hexanome.OUPS.model.tournee.DemandeLivraisons;
 import fr.insa.hexanome.OUPS.model.exception.FileExtension;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

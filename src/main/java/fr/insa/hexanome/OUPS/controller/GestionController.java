@@ -1,11 +1,19 @@
 package fr.insa.hexanome.OUPS.controller;
 
 
-import fr.insa.hexanome.OUPS.model.*;
 import fr.insa.hexanome.OUPS.model.dto.*;
+import fr.insa.hexanome.OUPS.model.carte.Carte;
+import fr.insa.hexanome.OUPS.model.carte.Entrepot;
+import fr.insa.hexanome.OUPS.model.carte.Intersection;
+import fr.insa.hexanome.OUPS.model.tournee.DemandeLivraisons;
+import fr.insa.hexanome.OUPS.model.tournee.TSPGraph;
+import fr.insa.hexanome.OUPS.model.tournee.TourneeLivraison;
 import fr.insa.hexanome.OUPS.services.CalculItineraire;
 import fr.insa.hexanome.OUPS.services.EtatType;
 import fr.insa.hexanome.OUPS.services.GestionService;
+import fr.insa.hexanome.OUPS.tsp.Graph;
+import fr.insa.hexanome.OUPS.tsp.TSP;
+import fr.insa.hexanome.OUPS.tsp.TSP1;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -118,6 +126,26 @@ public class GestionController {
         TourneeLivraison livraisonsOptimales = calculItineraireAleatoire.getPointsDeLivraisonClusterOptimise(request.getCoursier(),carte.getIntersectionsMap());
         System.out.println(livraisonsOptimales);
         return ResponseEntity.ok(livraisonsOptimales.toDTO());
+    }
+
+    @PostMapping("/graph")
+    public  ResponseEntity<Integer>
+    calculerGraph(
+            @RequestBody DemandeLivraisonsDTO request
+    ) throws ParserConfigurationException, IOException, SAXException {
+
+        Entrepot entrepot = Entrepot.builder()
+                .heureDepart(request.getEntrepot().getHeureDepart())
+                .intersection(Intersection.fromDTO(request.getEntrepot().getIntersection()))
+                .build();
+
+        DemandeLivraisons demandeLivraisons = request.toDemandeLivraisons();
+
+        Graph graph = new TSPGraph(demandeLivraisons, this.carte.getIntersectionsMap());
+        TSP tsp = new TSP1();
+        tsp.searchSolution(20000, graph);
+
+        return ResponseEntity.ok(tsp.getSolutionCost());
     }
 
 
