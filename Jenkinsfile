@@ -1,18 +1,24 @@
 pipeline {
-    agent any // Usar cualquier agente disponible
+    agent any
     stages {
-        stage('Verify Calculation') {
+        stage('Build') {
             steps {
-                script {
-                    // Verificar que 1 + 1 es igual a 2
-                    def result = 1 + 1
-                    if (result == 2) {
-                        echo 'La verificación es exitosa: 1 + 1 es igual a 2.'
-                    } else {
-                        error 'La verificación falló: 1 + 1 no es igual a 2.'
-                    }
-                }
+                // Compiler le projet
+                sh 'mvn clean package'
             }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+    }
+    post {
+        success {
+            echo 'La compilation et les tests ont été réussis !'
+        }
+        failure {
+            echo 'Il y a eu un échec lors de la compilation ou des tests.'
         }
     }
 }
