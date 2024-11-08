@@ -36,10 +36,19 @@ public class DemandeLivraisons extends ArrayList<Livraison> {
             result.add( new DemandeLivraisons(this.entrepot));
         }
 
+        int nbElementRestant = this.size()%nbCoursiers;
         int i = 0;
-        for (Livraison livraison : this) {
-            result.get(i % nbCoursiers).add(livraison);
-            i++;
+        for (Livraison l : this) {
+            int nbElementParListe = this.size()/nbCoursiers;
+            if (i < nbElementParListe) {
+                result.get(i).add(l);
+            } else {
+                i++;
+                result.get(i).add(l);
+            }
+        }
+        for(int j = 0 ;j<nbElementRestant;j++){
+            result.getFirst().add(this.get(this.size()-1-j));
         }
 
         return result;
