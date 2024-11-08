@@ -19,6 +19,7 @@ public class TSPGraph implements Graph {
     public TSPGraph(List<Livraison> livraisons, Carte carte) {
         this.livraisons = livraisons;
         this.carte = carte;
+        // Faire un dijkstra de tous les points de livraisons
 
     }
 
@@ -37,6 +38,7 @@ public class TSPGraph implements Graph {
         if (positionDansListVoisin == -1){
             return -1;
         }
+        //Utiliser le dijsktra
 
         return (int) (depart.getVoisins().get(positionDansListVoisin).getLongueur()*this.PRECISION);
 
@@ -49,6 +51,14 @@ public class TSPGraph implements Graph {
         int positionDansListVoisin = depart.aPourVoisin(arrive);
         return positionDansListVoisin != -1;
 
+    }
+
+    public List<Intersection> getSolution() {
+        for(int i = 0;i<livraisons.size();i++){
+            //calcul de solution
+
+        }
+        return null;
     }
 
 }

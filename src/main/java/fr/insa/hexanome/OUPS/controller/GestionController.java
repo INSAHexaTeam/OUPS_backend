@@ -107,26 +107,26 @@ public class GestionController {
 //        return ResponseEntity.ok(livraisonsAleatoires.toDTO());
 //    }
 
-    @PostMapping("/calculerItineraireClusterOptimal")
-    public  ResponseEntity<TourneeLivraisonDTO>
-    calculerItineraire(
-            @RequestBody DemandeLivraisonsDTO request
-    ) throws ParserConfigurationException, IOException, SAXException {
-
-        Entrepot entrepot = Entrepot.builder()
-                .heureDepart(request.getEntrepot().getHeureDepart())
-                .intersection(Intersection.fromDTO(request.getEntrepot().getIntersection()))
-                .build();
-
-        DemandeLivraisons demandeLivraisons = request.toDemandeLivraisons();
-        CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
-                .entrepots(entrepot)
-                .pointDeLivraisons(demandeLivraisons)
-                .build();
-        TourneeLivraison livraisonsOptimales = calculItineraireAleatoire.getPointsDeLivraisonClusterOptimise(request.getCoursier(),carte.getIntersectionsMap());
-        System.out.println(livraisonsOptimales);
-        return ResponseEntity.ok(livraisonsOptimales.toDTO());
-    }
+//    @PostMapping("/calculerItineraireClusterOptimal")
+//    public  ResponseEntity<TourneeLivraisonDTO>
+//    calculerItineraire(
+//            @RequestBody DemandeLivraisonsDTO request
+//    ) throws ParserConfigurationException, IOException, SAXException {
+//
+//        Entrepot entrepot = Entrepot.builder()
+//                .heureDepart(request.getEntrepot().getHeureDepart())
+//                .intersection(Intersection.fromDTO(request.getEntrepot().getIntersection()))
+//                .build();
+//
+//        DemandeLivraisons demandeLivraisons = request.toDemandeLivraisons();
+//        CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
+//                .entrepots(entrepot)
+//                .pointDeLivraisons(demandeLivraisons)
+//                .build();
+//        TourneeLivraison livraisonsOptimales = calculItineraireAleatoire.getPointsDeLivraisonClusterOptimise(request.getCoursier(),carte.getIntersectionsMap());
+//        System.out.println(livraisonsOptimales);
+//        return ResponseEntity.ok(livraisonsOptimales.toDTO());
+//    }
 
     @PostMapping("/graph")
     public  ResponseEntity<Integer>
@@ -140,12 +140,10 @@ public class GestionController {
                 .build();
 
         DemandeLivraisons demandeLivraisons = request.toDemandeLivraisons();
+        CalculItineraire calculItineraire = new CalculItineraire(carte, demandeLivraisons);
+        calculItineraire.calculDijkstra();
+        return ResponseEntity.ok(1);
 
-        Graph graph = new TSPGraph(demandeLivraisons, this.carte);
-        TSP tsp = new TSP1();
-        tsp.searchSolution(20000, graph);
-
-        return ResponseEntity.ok(tsp.getSolutionCost());
     }
 
 

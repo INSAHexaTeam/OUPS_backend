@@ -20,7 +20,7 @@ public class Intersection {
     private Double longitude;
     @JsonManagedReference
     private List<Voisin> voisins;
-
+    private final int TRAVER_SPEED = 15;
 
     public Intersection(Long id, Double latitude, Double longitude) {
         this.id = id;
@@ -86,5 +86,11 @@ public class Intersection {
         }
         return position;
     }
-
+    public double getCoutEntreVoisin(Intersection intersection){
+        int position = this.aPourVoisin(intersection);
+        if (position == -1){
+            return -1;
+        }
+        return this.voisins.get(position).getLongueur();
+    }
 }
