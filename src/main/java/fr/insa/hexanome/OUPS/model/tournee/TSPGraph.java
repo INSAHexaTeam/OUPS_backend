@@ -46,7 +46,6 @@ public class TSPGraph implements Graph {
     public List<Intersection> getSolution() {
         this.tsp = new TSP1();
         this.tsp.searchSolution(10000, this);
-        System.out.println("Solution cost: " + Arrays.toString(this.tsp.getFullSolution()));
         return null;
     }
 

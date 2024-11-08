@@ -76,7 +76,7 @@ public class Intersection {
         boolean founded = false;
         int position = -1;
         int i = 0;
-        while(!founded){
+        while(!founded && i < this.voisins.size()){
             Voisin voisin = intersection.getVoisins().get(i);
             if (Objects.equals(voisin.getDestination().getId(), intersection.getId())) {
                 founded = true;
