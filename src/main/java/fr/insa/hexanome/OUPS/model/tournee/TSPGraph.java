@@ -22,12 +22,7 @@ public class TSPGraph implements Graph {
     private ElemMatrice[][] matrice;
     private TSP1 tsp;
 
-    public TSPGraph(List<Livraison> livraisons, Carte carte, ElemMatrice[][] matrice) {
-        this.livraisons = livraisons;
-        this.carte = carte;
-        this.matrice = matrice;
-        this.tsp = new TSP1();
-    }
+
 
     @Override
     public int getNbVertices() {
@@ -49,6 +44,7 @@ public class TSPGraph implements Graph {
     }
 
     public List<Intersection> getSolution() {
+        this.tsp = new TSP1();
         this.tsp.searchSolution(10000, this);
         System.out.println("Solution cost: " + Arrays.toString(this.tsp.getFullSolution()));
         return null;
