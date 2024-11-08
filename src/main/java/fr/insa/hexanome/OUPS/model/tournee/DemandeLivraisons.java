@@ -6,6 +6,7 @@ import fr.insa.hexanome.OUPS.model.dto.DemandeLivraisonsDTO;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Data
@@ -13,6 +14,11 @@ import java.util.List;
 @Builder
 public class DemandeLivraisons extends ArrayList<Livraison> {
     private Entrepot entrepot;
+
+    public DemandeLivraisons(Entrepot entrepot) {
+        super();
+        this.entrepot = entrepot;
+    }
 
     public DemandeLivraisonsDTO toDTO() {
         return DemandeLivraisonsDTO.builder()

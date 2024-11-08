@@ -43,10 +43,14 @@ public class TSPGraph implements Graph {
         return !this.matrice[i][j].getIntersections().isEmpty();
     }
 
-    public List<Intersection> getSolution() {
+    public Integer[] getSolution() {
         this.tsp = new TSP1();
         this.tsp.searchSolution(10000, this);
-        return null;
+        //[0,1,2,3]
+        //[ 2, 3 , 1, 0]
+        //[ i2, i3 i1, i0]
+        return this.tsp.getFullSolution();
+
     }
 
 }

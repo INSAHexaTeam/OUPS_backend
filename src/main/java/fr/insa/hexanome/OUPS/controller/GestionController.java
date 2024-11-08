@@ -133,7 +133,7 @@ public class GestionController {
 //    }
 
     @PostMapping("/graph")
-    public  ResponseEntity<Integer>
+    public  ResponseEntity<List<DemandeLivraisons>>
     calculerGraph(
             @RequestBody DemandeLivraisonsDTO request
     ) throws ParserConfigurationException, IOException, SAXException {
@@ -143,37 +143,42 @@ public class GestionController {
                 .intersection(Intersection.fromDTO(request.getEntrepot().getIntersection()))
                 .build();
 
-        DemandeLivraisons demandeLivraisons = request.toDemandeLivraisons();
+        DemandeLivraisons demandeLivraisonsATransformer = request.toDemandeLivraisons();
         Livraison livraisonEntrepot = Livraison.builder()
                 .intersection(entrepot.getIntersection())
                 .estUneLivraison(false)
                 .build();
 
 
-        ArrayList<DemandeLivraisons> listeDeListe = demandeLivraisons.split(request.getCoursier());
-
-        for(DemandeLivraisons demandeLivraisons1 : listeDeListe){
-            demandeLivraisons1.addFirst(livraisonEntrepot);
+        ArrayList<DemandeLivraisons> listeDeListe = demandeLivraisonsATransformer.split(request.getCoursier());
+        ArrayList<DemandeLivraisons> resultat = new ArrayList<>();
+        for(DemandeLivraisons demandeLivraisonsCourante : listeDeListe){
+            demandeLivraisonsCourante.addFirst(livraisonEntrepot);
             CalculItineraire test = CalculItineraire.builder()
-                    .matrice(new ElemMatrice[demandeLivraisons.size()][demandeLivraisons.size()])
+                    .matrice(new ElemMatrice[demandeLivraisonsCourante.size()][demandeLivraisonsCourante.size()])
                     .carte(carte)
-                    .livraisons(demandeLivraisons)
+                    .livraisons(demandeLivraisonsCourante)
                     .build();
 
             test.calculDijkstra();
 
             TSPGraph graph = TSPGraph.builder()
                     .carte(carte)
-                    .livraisons(demandeLivraisons)
+                    .livraisons(demandeLivraisonsCourante)
                     .matrice(test.getMatrice())
                     .build();
+            Integer[] sol = graph.getSolution();
+            DemandeLivraisons solutionCourante = new DemandeLivraisons(null);
 
-            graph.getSolution();
+            for(int j =0;j<sol.length-1;j++){
+                solutionCourante.add(demandeLivraisonsCourante.get(sol[j]));
+            }
+            resultat.add(solutionCourante);
         }
 
 
 
-        return ResponseEntity.ok(1);
+        return ResponseEntity.ok(resultat);
 
     }
 
