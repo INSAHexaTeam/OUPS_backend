@@ -30,6 +30,12 @@ public abstract class TemplateTSP implements TSP {
 			return bestSol[i];
 		return -1;
 	}
+
+	public Integer[] getFullSolution(){
+		if (g != null)
+			return bestSol;
+		return null;
+	}
 	
 	public int getSolutionCost(){
 		if (g != null)

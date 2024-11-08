@@ -4,23 +4,29 @@ import fr.insa.hexanome.OUPS.model.carte.Carte;
 import fr.insa.hexanome.OUPS.model.carte.Intersection;
 import fr.insa.hexanome.OUPS.model.carte.Livraison;
 import fr.insa.hexanome.OUPS.tsp.Graph;
+import fr.insa.hexanome.OUPS.tsp.TSP;
+import fr.insa.hexanome.OUPS.tsp.TSP1;
+import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.Cache;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
+@Builder
 @Getter
 public class TSPGraph implements Graph {
     private final List<Livraison> livraisons;
     private final Carte carte;
     private final int PRECISION = 1000;
+    private ElemMatrice[][] matrice;
+    private TSP1 tsp;
 
-    public TSPGraph(List<Livraison> livraisons, Carte carte) {
+    public TSPGraph(List<Livraison> livraisons, Carte carte, ElemMatrice[][] matrice) {
         this.livraisons = livraisons;
         this.carte = carte;
-        // Faire un dijkstra de tous les points de livraisons
-
+        this.matrice = matrice;
+        this.tsp = new TSP1();
     }
 
     @Override
@@ -30,34 +36,21 @@ public class TSPGraph implements Graph {
 
     @Override
     public int getCost(int i, int j) {
-        Intersection depart = this.livraisons.get(i).getIntersection();
-        Intersection arrive = this.livraisons.get(j).getIntersection();
 
-
-        int positionDansListVoisin = depart.aPourVoisin(arrive);
-        if (positionDansListVoisin == -1){
+        if(matrice[i][j] == null){
             return -1;
         }
-        //Utiliser le dijsktra
-
-        return (int) (depart.getVoisins().get(positionDansListVoisin).getLongueur()*this.PRECISION);
-
+        return (int) (this.matrice[i][j].getCout() * this.PRECISION);
     }
 
     @Override
     public boolean isArc(int i, int j) {
-        Intersection depart = this.livraisons.get(i).getIntersection();
-        Intersection arrive = this.livraisons.get(j).getIntersection();
-        int positionDansListVoisin = depart.aPourVoisin(arrive);
-        return positionDansListVoisin != -1;
-
+        return !this.matrice[i][j].getIntersections().isEmpty();
     }
 
     public List<Intersection> getSolution() {
-        for(int i = 0;i<livraisons.size();i++){
-            //calcul de solution
-
-        }
+        this.tsp.searchSolution(10000, this);
+        System.out.println("Solution cost: " + Arrays.toString(this.tsp.getFullSolution()));
         return null;
     }
 

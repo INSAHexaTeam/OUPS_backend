@@ -141,12 +141,20 @@ public class GestionController {
                 .build();
 
         DemandeLivraisons demandeLivraisons = request.toDemandeLivraisons();
+
         CalculItineraire test = CalculItineraire.builder()
                 .matrice(new ElemMatrice[demandeLivraisons.size()][demandeLivraisons.size()])
                 .carte(carte)
                 .livraisons(demandeLivraisons)
                 .build();
         test.calculDijkstra();
+
+        TSPGraph graph = TSPGraph.builder()
+                .carte(carte)
+                .livraisons(demandeLivraisons)
+                .matrice(test.getMatrice())
+                .build();
+        graph.getSolution();
         return ResponseEntity.ok(1);
 
     }
