@@ -1,6 +1,7 @@
 package fr.insa.hexanome.OUPS.controller;
 
 
+import fr.insa.hexanome.OUPS.model.carte.Livraison;
 import fr.insa.hexanome.OUPS.model.dto.*;
 import fr.insa.hexanome.OUPS.model.carte.Carte;
 import fr.insa.hexanome.OUPS.model.carte.Entrepot;
@@ -141,6 +142,12 @@ public class GestionController {
                 .build();
 
         DemandeLivraisons demandeLivraisons = request.toDemandeLivraisons();
+        Livraison livraisonEntrepot = Livraison.builder()
+                .intersection(entrepot.getIntersection())
+                .estUneLivraison(false)
+                .build();
+
+        demandeLivraisons.addFirst(livraisonEntrepot);
 
         CalculItineraire test = CalculItineraire.builder()
                 .matrice(new ElemMatrice[demandeLivraisons.size()][demandeLivraisons.size()])

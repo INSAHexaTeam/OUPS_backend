@@ -21,6 +21,7 @@ public class CalculItineraire {
     private Carte carte;
     private List<Livraison> livraisons;
     private ElemMatrice[][] matrice;
+    private Entrepot entrepot;
 
     /**
      * Calcul de l'itinéraire le plus court entre deux points grâce aux intersections de la carte
