@@ -141,7 +141,7 @@ public class GestionController {
 
         DemandeLivraisons demandeLivraisons = request.toDemandeLivraisons();
 
-        Graph graph = new TSPGraph(demandeLivraisons, this.carte.getIntersectionsMap());
+        Graph graph = new TSPGraph(demandeLivraisons, this.carte);
         TSP tsp = new TSP1();
         tsp.searchSolution(20000, graph);
 
