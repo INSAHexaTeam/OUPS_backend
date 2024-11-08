@@ -26,8 +26,15 @@ public class Voisin {
     }
 
     public VoisinDTO toDTO() {
-        IntersectionDTO voisinDuVoisin = destination.toDTO();
-        voisinDuVoisin.setVoisins(null);
+        Intersection tempDest = Intersection.builder()
+                .voisins(null)
+                .id(destination.getId())
+                .longitude(destination.getLongitude())
+                .latitude(destination.getLatitude())
+                .build();
+
+        IntersectionDTO voisinDuVoisin = tempDest.toDTO();
+
 
         return VoisinDTO.builder()
                 .nomRue(nomRue)
