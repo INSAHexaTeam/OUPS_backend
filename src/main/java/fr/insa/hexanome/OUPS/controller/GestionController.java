@@ -22,7 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -147,21 +149,30 @@ public class GestionController {
                 .estUneLivraison(false)
                 .build();
 
-        demandeLivraisons.addFirst(livraisonEntrepot);
 
-        CalculItineraire test = CalculItineraire.builder()
-                .matrice(new ElemMatrice[demandeLivraisons.size()][demandeLivraisons.size()])
-                .carte(carte)
-                .livraisons(demandeLivraisons)
-                .build();
-        test.calculDijkstra();
+        ArrayList<DemandeLivraisons> listeDeListe = demandeLivraisons.split(request.getCoursier());
 
-        TSPGraph graph = TSPGraph.builder()
-                .carte(carte)
-                .livraisons(demandeLivraisons)
-                .matrice(test.getMatrice())
-                .build();
-        graph.getSolution();
+        for(DemandeLivraisons demandeLivraisons1 : listeDeListe){
+            demandeLivraisons1.addFirst(livraisonEntrepot);
+            CalculItineraire test = CalculItineraire.builder()
+                    .matrice(new ElemMatrice[demandeLivraisons.size()][demandeLivraisons.size()])
+                    .carte(carte)
+                    .livraisons(demandeLivraisons)
+                    .build();
+
+            test.calculDijkstra();
+
+            TSPGraph graph = TSPGraph.builder()
+                    .carte(carte)
+                    .livraisons(demandeLivraisons)
+                    .matrice(test.getMatrice())
+                    .build();
+
+            graph.getSolution();
+        }
+
+
+
         return ResponseEntity.ok(1);
 
     }
