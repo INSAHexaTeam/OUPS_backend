@@ -22,12 +22,6 @@ public class CalculItineraire {
     private List<Livraison> livraisons;
     private ElemMatrice[][] matrice;
 
-    public CalculItineraire(Carte carte, List<Livraison> livraisons) {
-        this.carte = carte;
-        this.livraisons = livraisons;
-    }
-
-
     /**
      * Calcul de l'itinéraire le plus court entre deux points grâce aux intersections de la carte
      * @param depart
@@ -95,9 +89,6 @@ public class CalculItineraire {
 
 
     public void calculDijkstra(){
-        // Initialisation de la matrice
-        this.matrice = new ElemMatrice[this.livraisons.size()][this.livraisons.size()];
-
         //boucle pour remplir la matrice avec les elemMatrice
         for(int i = 0; i < this.livraisons.size(); i++){
             for(int j = 0; j < this.livraisons.size(); j++){

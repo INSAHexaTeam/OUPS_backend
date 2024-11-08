@@ -6,6 +6,7 @@ import fr.insa.hexanome.OUPS.model.carte.Carte;
 import fr.insa.hexanome.OUPS.model.carte.Entrepot;
 import fr.insa.hexanome.OUPS.model.carte.Intersection;
 import fr.insa.hexanome.OUPS.model.tournee.DemandeLivraisons;
+import fr.insa.hexanome.OUPS.model.tournee.ElemMatrice;
 import fr.insa.hexanome.OUPS.model.tournee.TSPGraph;
 import fr.insa.hexanome.OUPS.model.tournee.TourneeLivraison;
 import fr.insa.hexanome.OUPS.services.CalculItineraire;
@@ -140,8 +141,12 @@ public class GestionController {
                 .build();
 
         DemandeLivraisons demandeLivraisons = request.toDemandeLivraisons();
-        CalculItineraire calculItineraire = new CalculItineraire(carte, demandeLivraisons);
-        calculItineraire.calculDijkstra();
+        CalculItineraire test = CalculItineraire.builder()
+                .matrice(new ElemMatrice[demandeLivraisons.size()][demandeLivraisons.size()])
+                .carte(carte)
+                .livraisons(demandeLivraisons)
+                .build();
+        test.calculDijkstra();
         return ResponseEntity.ok(1);
 
     }
