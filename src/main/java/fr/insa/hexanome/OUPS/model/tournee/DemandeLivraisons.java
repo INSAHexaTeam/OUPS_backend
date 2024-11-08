@@ -30,26 +30,31 @@ public class DemandeLivraisons extends ArrayList<Livraison> {
     }
 
     public ArrayList<DemandeLivraisons> split(int nbCoursiers) {
-
         ArrayList<DemandeLivraisons> result = new ArrayList<>();
         for (int i = 0; i < nbCoursiers; i++) {
-            result.add( new DemandeLivraisons(this.entrepot));
+            result.add(new DemandeLivraisons(this.entrepot));
         }
 
-        int nbElementRestant = this.size()%nbCoursiers;
-        int nbElementParListe = this.size()/nbCoursiers;
-        for(int i =0;i<nbCoursiers;i++){
-            for(int j = 0; j <nbElementParListe;j++){
-                Livraison l = this.get(j);
+        int nbElementParListe = this.size() / nbCoursiers;
+        int nbElementRestant = this.size() % nbCoursiers;
+        int index = 0;
+
+        // Distribution des livraisons de base
+        for (int i = 0; i < nbCoursiers; i++) {
+            for (int j = 0; j < nbElementParListe; j++) {
+                Livraison l = this.get(index++);
                 result.get(i).add(l);
-                j++;
             }
         }
 
-        for(int j = 0 ;j<nbElementRestant;j++){
-            result.getFirst().add(this.get(this.size()-1-j));
+        // Distribution des livraisons restantes aux premières sous-listes
+        for (int j = 0; j < nbElementRestant; j++) {
+            Livraison l = this.get(index++);
+            result.get(j).add(l);
         }
 
         return result;
     }
+
+
 }

@@ -151,9 +151,13 @@ public class GestionController {
 
 
         ArrayList<DemandeLivraisons> listeDeListe = demandeLivraisonsATransformer.split(request.getCoursier());
+        for(int i=0; i< listeDeListe.size(); i++) {
+            System.out.println(listeDeListe.get(i).size());
+        }
         ArrayList<DemandeLivraisons> resultat = new ArrayList<>();
         for(DemandeLivraisons demandeLivraisonsCourante : listeDeListe){
             demandeLivraisonsCourante.addFirst(livraisonEntrepot);
+            System.out.println(demandeLivraisonsCourante.size());
             CalculItineraire test = CalculItineraire.builder()
                     .matrice(new ElemMatrice[demandeLivraisonsCourante.size()][demandeLivraisonsCourante.size()])
                     .carte(carte)
@@ -170,7 +174,7 @@ public class GestionController {
             Integer[] sol = graph.getSolution();
             DemandeLivraisons solutionCourante = new DemandeLivraisons(null);
 
-            for(int j =0;j<sol.length-1;j++){
+            for(int j =0;j<sol.length;j++){
                 solutionCourante.add(demandeLivraisonsCourante.get(sol[j]));
             }
             resultat.add(solutionCourante);

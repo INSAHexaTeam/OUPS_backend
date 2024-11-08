@@ -100,7 +100,7 @@ public class CalculItineraire {
                 }
             }
         }
-        System.out.println(Arrays.deepToString(this.matrice));
+        //System.out.println(Arrays.deepToString(this.matrice));
     }
 }
 
