@@ -5,6 +5,8 @@ import fr.insa.hexanome.OUPS.model.dto.IntersectionDTO;
 import fr.insa.hexanome.OUPS.model.dto.VoisinDTO;
 import lombok.*;
 
+import java.util.ArrayList;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -27,7 +29,9 @@ public class Voisin {
 
     public VoisinDTO toDTO() {
         Intersection tempDest = Intersection.builder()
-                .voisins(null)
+                .voisins(
+                        new ArrayList<>()
+                )
                 .id(destination.getId())
                 .longitude(destination.getLongitude())
                 .latitude(destination.getLatitude())
