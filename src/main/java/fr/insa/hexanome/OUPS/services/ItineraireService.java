@@ -10,8 +10,8 @@ public class ItineraireService {
 
     public static List<Intersection> trouverCheminEntreDeuxIntersections(Intersection depart, Intersection arrivee, Map<Long, Intersection> carte) {
         // Debug
-        System.out.println("Recherche de chemin de " + depart.getId() + " vers " + arrivee.getId());
-        System.out.println("Voisins du point de départ : " + (depart.getVoisins() != null ? depart.getVoisins().size() : "null"));
+//        System.out.println("Recherche de chemin de " + depart.getId() + " vers " + arrivee.getId());
+//        System.out.println("Voisins du point de départ : " + (depart.getVoisins() != null ? depart.getVoisins().size() : "null"));
 
         Map<Long, Double> distances = new HashMap<>();
         Map<Long, Long> previous = new HashMap<>();
@@ -33,7 +33,7 @@ public class ItineraireService {
         // Dijkstra's algorithm
         while (!queue.isEmpty()) {
             Intersection current = queue.poll();
-            System.out.println("Exploration du point : " + current.getId());
+//            System.out.println("Exploration du point : " + current.getId());
 
             if (current.getId().equals(arrivee.getId())) {
                 cheminTrouve = true;
@@ -44,10 +44,10 @@ public class ItineraireService {
             current = carte.get(current.getId());
             List<Voisin> voisins = current.getVoisins();
 
-            System.out.println("Voisins actuels : " + (voisins != null ? voisins.size() : "null"));
+//            System.out.println("Voisins actuels : " + (voisins != null ? voisins.size() : "null"));
 
             if (voisins == null || voisins.isEmpty()) {
-                System.out.println("Pas de voisins pour " + current.getId());
+//                System.out.println("Pas de voisins pour " + current.getId());
                 continue;
             }
 
@@ -57,10 +57,10 @@ public class ItineraireService {
                 }
 
                 Long neighborId = voisin.getDestination().getId();
-                System.out.println("Analyse du voisin : " + neighborId);
+//                System.out.println("Analyse du voisin : " + neighborId);
 
                 if (!carte.containsKey(neighborId)) {
-                    System.out.println("Voisin non trouvé dans la carte : " + neighborId);
+//                    System.out.println("Voisin non trouvé dans la carte : " + neighborId);
                     continue;
                 }
 
@@ -69,13 +69,13 @@ public class ItineraireService {
                     distances.put(neighborId, newDist);
                     previous.put(neighborId, current.getId());
                     queue.add(carte.get(neighborId));
-                    System.out.println("Ajout du point " + neighborId + " au chemin");
+//                    System.out.println("Ajout du point " + neighborId + " au chemin");
                 }
             }
         }
 
         if (!cheminTrouve) {
-            System.out.println("Aucun chemin trouvé entre " + depart.getId() + " et " + arrivee.getId());
+//            System.out.println("Aucun chemin trouvé entre " + depart.getId() + " et " + arrivee.getId());
         }
 
         List<Intersection> chemin = new ArrayList<>();
@@ -86,18 +86,18 @@ public class ItineraireService {
                 chemin.add(0, intersection);
                 at = previous.get(at);
             } else {
-                System.out.println("Intersection non trouvée pour l'ID : " + at);
+//                System.out.println("Intersection non trouvée pour l'ID : " + at);
                 break;
             }
         }
 
-        System.out.println("Taille du chemin trouvé : " + chemin.size());
-        System.out.println("Points du chemin : " + chemin.stream()
-                .map(Intersection::getId)
-                .collect(Collectors.toList()));
+//        System.out.println("Taille du chemin trouvé : " + chemin.size());
+//        System.out.println("Points du chemin : " + chemin.stream()
+//                .map(Intersection::getId)
+//                .collect(Collectors.toList()));
 
         if (chemin.isEmpty()) {
-            System.out.println("Chemin vide, ajout des points de départ et d'arrivée");
+//            System.out.println("Chemin vide, ajout des points de départ et d'arrivée");
             chemin.add(depart);
             if (!depart.equals(arrivee)) {
                 chemin.add(arrivee);

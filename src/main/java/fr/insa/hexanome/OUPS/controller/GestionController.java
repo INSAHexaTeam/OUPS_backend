@@ -138,36 +138,72 @@ public class GestionController {
 //    }
 
 
-    @PostMapping("/calculerItineraireOrdonné")
-    public ResponseEntity<TourneeLivraisonDTO>
-    calculItinéraireOrdonne(
-            @RequestBody List<DemandeLivraisonsDTO> request
-    ) throws ParserConfigurationException, IOException, SAXException {
-
-        TourneeLivraison tourneeOrdonnee = new TourneeLivraison();
-
-        for(DemandeLivraisonsDTO demandeLivraisonsDTO : request){
-            Entrepot entrepot = Entrepot.builder()
-                    .heureDepart(demandeLivraisonsDTO.getEntrepot().getHeureDepart())
-                    .intersection(Intersection.fromDTO(demandeLivraisonsDTO.getEntrepot().getIntersection()))
+    @PostMapping("/calculerItineraireOrdonne")
+    public ResponseEntity<TourneeLivraisonDTO> calculItineraireOrdonne(
+            @RequestBody TourneeLivraisonDTO request
+    ) {
+        try {
+            System.out.println(request);
+            // Créer une nouvelle tournée qui contiendra les chemins calculés
+            TourneeLivraison tourneeLivraisonResultat = TourneeLivraison.builder()
+                    .parcoursDeLivraisons(new ArrayList<>())
                     .build();
 
-            ParcoursDeLivraison parcoursDeLivraison = ParcoursDeLivraison.builder()
-                    .entrepot(entrepot)
-                    .livraisons(new ArrayList<>())
-                    .build();
+            // Pour chaque parcours de livraison dans la requête
+            for (ParcoursDeLivraisonDTO parcoursDTO : request.getLivraisons()) {
+                // Convertir le DTO en modèle
+                DemandeLivraisons demandeLivraisons = parcoursDTO.getLivraisons().toDemandeLivraisons();
 
-            DemandeLivraisons demandeLivraisons = demandeLivraisonsDTO.toDemandeLivraisons();
+                // Créer un nouveau parcours pour ce coursier
+                ParcoursDeLivraison parcoursDeLivraison = ParcoursDeLivraison.builder()
+                        .entrepot(demandeLivraisons.getEntrepot())
+                        .livraisons(demandeLivraisons)
+                        .chemin(new ArrayList<>())
+                        .build();
 
-            for(Livraison livraison : demandeLivraisons){
-                List<Intersection> chemin = trouverCheminEntreDeuxIntersections(entrepot.getIntersection(), livraison.getIntersection(), carte.getIntersectionsMap());
-                parcoursDeLivraison.getChemin().addAll(chemin);
+                // Récupérer l'entrepôt
+                Intersection depart = demandeLivraisons.getEntrepot().getIntersection();
+
+                // Récupérer la map des intersections pour dijkstra
+                Map<Long, Intersection> intersectionsMap = carte.getIntersectionsMap();
+
+                // Calculer le chemin de l'entrepôt à la première livraison
+                if (!demandeLivraisons.isEmpty()) {
+                    List<Intersection> cheminInitial = ItineraireService.trouverCheminEntreDeuxIntersections(
+                            depart,
+                            demandeLivraisons.get(0).getIntersection(),
+                            intersectionsMap
+                    );
+                    parcoursDeLivraison.getChemin().addAll(cheminInitial);
+
+                    // Calculer le chemin entre chaque livraison
+                    for (int i = 0; i < demandeLivraisons.size() - 1; i++) {
+                        List<Intersection> cheminLivraison = ItineraireService.trouverCheminEntreDeuxIntersections(
+                                demandeLivraisons.get(i).getIntersection(),
+                                demandeLivraisons.get(i + 1).getIntersection(),
+                                intersectionsMap
+                        );
+                        parcoursDeLivraison.getChemin().addAll(cheminLivraison);
+                    }
+
+                    // Calculer le chemin de la dernière livraison à l'entrepôt
+                    List<Intersection> cheminFinal = ItineraireService.trouverCheminEntreDeuxIntersections(
+                            demandeLivraisons.get(demandeLivraisons.size() - 1).getIntersection(),
+                            depart,
+                            intersectionsMap
+                    );
+                    parcoursDeLivraison.getChemin().addAll(cheminFinal);
+                }
+
+                tourneeLivraisonResultat.getParcoursDeLivraisons().add(parcoursDeLivraison);
             }
 
+            return ResponseEntity.ok(tourneeLivraisonResultat.toDTO());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
         }
-
-
-        return ResponseEntity.ok(tourneeOrdonnee.toDTO());
     }
 
     @PostMapping("/graph")
