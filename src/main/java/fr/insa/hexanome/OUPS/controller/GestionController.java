@@ -6,10 +6,7 @@ import fr.insa.hexanome.OUPS.model.dto.*;
 import fr.insa.hexanome.OUPS.model.carte.Carte;
 import fr.insa.hexanome.OUPS.model.carte.Entrepot;
 import fr.insa.hexanome.OUPS.model.carte.Intersection;
-import fr.insa.hexanome.OUPS.model.tournee.DemandeLivraisons;
-import fr.insa.hexanome.OUPS.model.tournee.ElemMatrice;
-import fr.insa.hexanome.OUPS.model.tournee.TSPGraph;
-import fr.insa.hexanome.OUPS.model.tournee.TourneeLivraison;
+import fr.insa.hexanome.OUPS.model.tournee.*;
 import fr.insa.hexanome.OUPS.services.CalculItineraire;
 import fr.insa.hexanome.OUPS.services.EtatType;
 import fr.insa.hexanome.OUPS.services.GestionService;
@@ -133,7 +130,7 @@ public class GestionController {
 //    }
 
     @PostMapping("/graph")
-    public  ResponseEntity<List<List<Intersection>>>
+    public  ResponseEntity<TourneeLivraisonDTO>
     calculerGraph(
             @RequestBody DemandeLivraisonsDTO request
     ) throws ParserConfigurationException, IOException, SAXException {
@@ -149,16 +146,33 @@ public class GestionController {
                 .estUneLivraison(false)
                 .build();
 
+        if (livraisonEntrepot.getIntersection() == null) {
+            throw new IllegalArgumentException("L'entrepôt n'a pas été défini.");
+        }
+
+        TourneeLivraison tourneeLivraison = TourneeLivraison.builder()
+                .parcoursDeLivraisons(new ArrayList<>())
+                .build();
+
 
         ArrayList<DemandeLivraisons> listeDeListe = demandeLivraisonsATransformer.split(request.getCoursier());
+
+
         ArrayList<List<Intersection>> resultat = new ArrayList<>();
         for(DemandeLivraisons demandeLivraisonsCourante : listeDeListe){
+            ParcoursDeLivraison parcoursParCoursier = ParcoursDeLivraison.builder()
+                    .entrepot(entrepot)
+                    .livraisons(new ArrayList<>())
+                    .build();
+
             demandeLivraisonsCourante.addFirst(livraisonEntrepot);
+//            demandeLivraisonsCourante.addLast(livraisonEntrepot);
             CalculItineraire test = CalculItineraire.builder()
                     .matrice(new ElemMatrice[demandeLivraisonsCourante.size()][demandeLivraisonsCourante.size()])
                     .carte(carte)
                     .livraisons(demandeLivraisonsCourante)
                     .build();
+
 
             test.calculDijkstra(); //rempli la matrice d'adjacence
 
@@ -178,11 +192,18 @@ public class GestionController {
                     chemin.addAll(elem.getIntersections());
                 }
             }
-            resultat.add(chemin);
+            ElemMatrice elem = test.getMatrice()[sol[sol.length-1]][sol[0]];
+            chemin.addAll(elem.getIntersections());
+
+            parcoursParCoursier.setChemin(chemin);
+            parcoursParCoursier.setLivraisons(solutionCourante);
+            tourneeLivraison.getParcoursDeLivraisons().add(parcoursParCoursier);
+
         }
 
 
-        return ResponseEntity.ok(resultat);
+
+        return ResponseEntity.ok(tourneeLivraison.toDTO());
 
     }
 
