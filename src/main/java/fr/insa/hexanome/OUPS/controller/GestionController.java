@@ -10,6 +10,7 @@ import fr.insa.hexanome.OUPS.model.tournee.*;
 import fr.insa.hexanome.OUPS.services.CalculItineraire;
 import fr.insa.hexanome.OUPS.services.EtatType;
 import fr.insa.hexanome.OUPS.services.GestionService;
+import fr.insa.hexanome.OUPS.services.ItineraireService;
 import fr.insa.hexanome.OUPS.tsp.Graph;
 import fr.insa.hexanome.OUPS.tsp.TSP;
 import fr.insa.hexanome.OUPS.tsp.TSP1;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static fr.insa.hexanome.OUPS.services.ItineraireService.trouverCheminEntreDeuxIntersections;
 
 @RestController
 @RequestMapping("/carte")
@@ -133,6 +136,39 @@ public class GestionController {
 //        System.out.println(livraisonsOptimales);
 //        return ResponseEntity.ok(livraisonsOptimales.toDTO());
 //    }
+
+
+    @PostMapping("/calculerItineraireOrdonné")
+    public ResponseEntity<TourneeLivraisonDTO>
+    calculItinéraireOrdonne(
+            @RequestBody List<DemandeLivraisonsDTO> request
+    ) throws ParserConfigurationException, IOException, SAXException {
+
+        TourneeLivraison tourneeOrdonnee = new TourneeLivraison();
+
+        for(DemandeLivraisonsDTO demandeLivraisonsDTO : request){
+            Entrepot entrepot = Entrepot.builder()
+                    .heureDepart(demandeLivraisonsDTO.getEntrepot().getHeureDepart())
+                    .intersection(Intersection.fromDTO(demandeLivraisonsDTO.getEntrepot().getIntersection()))
+                    .build();
+
+            ParcoursDeLivraison parcoursDeLivraison = ParcoursDeLivraison.builder()
+                    .entrepot(entrepot)
+                    .livraisons(new ArrayList<>())
+                    .build();
+
+            DemandeLivraisons demandeLivraisons = demandeLivraisonsDTO.toDemandeLivraisons();
+
+            for(Livraison livraison : demandeLivraisons){
+                List<Intersection> chemin = trouverCheminEntreDeuxIntersections(entrepot.getIntersection(), livraison.getIntersection(), carte.getIntersectionsMap());
+                parcoursDeLivraison.getChemin().addAll(chemin);
+            }
+
+        }
+
+
+        return ResponseEntity.ok(tourneeOrdonnee.toDTO());
+    }
 
     @PostMapping("/graph")
     public  ResponseEntity<TourneeLivraisonDTO>
