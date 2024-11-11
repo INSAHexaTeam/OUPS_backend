@@ -13,6 +13,11 @@ import fr.insa.hexanome.OUPS.services.GestionService;
 import fr.insa.hexanome.OUPS.tsp.Graph;
 import fr.insa.hexanome.OUPS.tsp.TSP;
 import fr.insa.hexanome.OUPS.tsp.TSP1;
+import org.apache.commons.math3.ml.clustering.CentroidCluster;
+import org.apache.commons.math3.ml.clustering.Cluster;
+import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
+import org.apache.commons.math3.ml.distance.EuclideanDistance;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -155,18 +160,31 @@ public class GestionController {
                 .build();
 
 
-        ArrayList<DemandeLivraisons> listeDeListe = demandeLivraisonsATransformer.split(request.getCoursier());
+        // Clustering des livraisons (code existant...)
+        List<ClusterableLivraison> clusterableLivraisons = new ArrayList<>();
+        for (Livraison livraison : demandeLivraisonsATransformer) {
+            clusterableLivraisons.add(new ClusterableLivraison(livraison));
+        }
+
+        //fix une graine pour avoir des résultats reproductibles (voir la fonction du dessus pour voir comment faire sans graine)
+        RandomGenerator random = new org.apache.commons.math3.random.JDKRandomGenerator(42); // Graine fixe
+        KMeansPlusPlusClusterer<ClusterableLivraison> clusterer =
+                new KMeansPlusPlusClusterer<>(request.getCoursier(), 1000, new EuclideanDistance(), random);
+        List<CentroidCluster<ClusterableLivraison>> clusters = clusterer.cluster(clusterableLivraisons);
 
 
-        ArrayList<List<Intersection>> resultat = new ArrayList<>();
-        for(DemandeLivraisons demandeLivraisonsCourante : listeDeListe){
+        for(Cluster<ClusterableLivraison> clusterLivraison : clusters){
+
+            List<Livraison> demandeLivraisonsCourante = new ArrayList<>
+                    (clusterLivraison.getPoints().stream().map(ClusterableLivraison::getLivraison).toList());
+
+
             ParcoursDeLivraison parcoursParCoursier = ParcoursDeLivraison.builder()
                     .entrepot(entrepot)
                     .livraisons(new ArrayList<>())
                     .build();
 
             demandeLivraisonsCourante.addFirst(livraisonEntrepot);
-//            demandeLivraisonsCourante.addLast(livraisonEntrepot);
             CalculItineraire test = CalculItineraire.builder()
                     .matrice(new ElemMatrice[demandeLivraisonsCourante.size()][demandeLivraisonsCourante.size()])
                     .carte(carte)
