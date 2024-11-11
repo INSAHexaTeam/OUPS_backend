@@ -59,7 +59,7 @@ public class Intersection {
                 .longitude(dto.getLongitude())
                 .voisins(dto.getVoisins() != null ? dto.getVoisins().stream()
                         .map(Voisin::fromDTO)
-                        .collect(Collectors.toList()) : null)
+                        .collect(Collectors.toList()) : new ArrayList<>())
                 .build();
     }
     @Override
