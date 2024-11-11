@@ -1,4 +1,4 @@
-package fr.insa.hexanome.OUPS.model;
+package fr.insa.hexanome.OUPS.model.carte;
 
 import fr.insa.hexanome.OUPS.model.dto.LivraisonDTO;
 import lombok.AllArgsConstructor;

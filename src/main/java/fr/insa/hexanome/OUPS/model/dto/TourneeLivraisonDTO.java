@@ -1,6 +1,5 @@
 package fr.insa.hexanome.OUPS.model.dto;
 
-import fr.insa.hexanome.OUPS.model.ParcoursDeLivraison;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

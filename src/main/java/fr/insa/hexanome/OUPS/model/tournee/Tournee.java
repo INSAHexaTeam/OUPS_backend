@@ -1,5 +1,6 @@
-package fr.insa.hexanome.OUPS.model;
+package fr.insa.hexanome.OUPS.model.tournee;
 
+import fr.insa.hexanome.OUPS.model.carte.Intersection;
 import fr.insa.hexanome.OUPS.model.dto.TourneeDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

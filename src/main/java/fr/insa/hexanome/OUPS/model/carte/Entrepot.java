@@ -1,9 +1,8 @@
-package fr.insa.hexanome.OUPS.model;
+package fr.insa.hexanome.OUPS.model.carte;
 
 import fr.insa.hexanome.OUPS.model.dto.EntrepotDTO;
 import lombok.*;
 
-import java.util.Date;
 @Data
 @Builder
 public class Entrepot  {

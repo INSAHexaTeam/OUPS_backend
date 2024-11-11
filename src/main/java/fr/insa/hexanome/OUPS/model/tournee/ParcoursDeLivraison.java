@@ -1,5 +1,8 @@
-package fr.insa.hexanome.OUPS.model;
+package fr.insa.hexanome.OUPS.model.tournee;
 
+import fr.insa.hexanome.OUPS.model.carte.Entrepot;
+import fr.insa.hexanome.OUPS.model.carte.Intersection;
+import fr.insa.hexanome.OUPS.model.carte.Livraison;
 import fr.insa.hexanome.OUPS.model.dto.IntersectionDTO;
 import fr.insa.hexanome.OUPS.model.dto.DemandeLivraisonsDTO;
 import fr.insa.hexanome.OUPS.model.dto.LivraisonDTO;
@@ -14,16 +17,16 @@ import java.util.stream.Collectors;
 public class ParcoursDeLivraison {
     private Entrepot entrepot;
     private List<Livraison> livraisons;
+    private List<Intersection> chemin;
 
     public ParcoursDeLivraisonDTO toDTO() {
-        List<IntersectionDTO> cheminIntersectionsDTO = livraisons.stream()
-                .map(livraison -> livraison.getIntersection().toDTO())
+        List<IntersectionDTO> cheminIntersectionsDTO = chemin.stream()
+                .map(Intersection::toDTO)
                 .collect(Collectors.toList());
 
         DemandeLivraisonsDTO demandeLivraisonsDTO = DemandeLivraisonsDTO.builder()
                 .entrepot(entrepot.toDTO())
                 .livraisons(livraisons.stream()
-                        .filter(Livraison::isEstUneLivraison)
                         .map(livraison -> LivraisonDTO.builder()
                                 .intersection(livraison.getIntersection().toDTO())
                                 .build())

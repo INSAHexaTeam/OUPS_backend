@@ -1,12 +1,12 @@
-package fr.insa.hexanome.OUPS.model;
+package fr.insa.hexanome.OUPS.model.carte;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import fr.insa.hexanome.OUPS.model.dto.IntersectionDTO;
 import fr.insa.hexanome.OUPS.model.dto.VoisinDTO;
 import lombok.*;
 
-import java.util.List;
+import java.util.ArrayList;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -28,7 +28,18 @@ public class Voisin {
     }
 
     public VoisinDTO toDTO() {
-        IntersectionDTO voisinDuVoisin = null;
+        Intersection tempDest = Intersection.builder()
+                .voisins(
+                        new ArrayList<>()
+                )
+                .id(destination.getId())
+                .longitude(destination.getLongitude())
+                .latitude(destination.getLatitude())
+                .build();
+
+        IntersectionDTO voisinDuVoisin = tempDest.toDTO();
+
+
         return VoisinDTO.builder()
                 .nomRue(nomRue)
                 .longueur(longueur)

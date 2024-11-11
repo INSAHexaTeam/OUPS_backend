@@ -1,6 +1,7 @@
 package fr.insa.hexanome.OUPS.services;
 
-import fr.insa.hexanome.OUPS.model.*;
+import fr.insa.hexanome.OUPS.model.carte.*;
+import fr.insa.hexanome.OUPS.model.tournee.DemandeLivraisons;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

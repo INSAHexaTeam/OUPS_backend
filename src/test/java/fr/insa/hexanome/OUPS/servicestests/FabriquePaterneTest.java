@@ -1,9 +1,8 @@
 package fr.insa.hexanome.OUPS.servicestests;
 
-import fr.insa.hexanome.OUPS.model.Intersection;
-import fr.insa.hexanome.OUPS.model.Voisin;
+import fr.insa.hexanome.OUPS.model.carte.Intersection;
+import fr.insa.hexanome.OUPS.model.carte.Voisin;
 import fr.insa.hexanome.OUPS.services.FabriquePaterne;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

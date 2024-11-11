@@ -1,4 +1,4 @@
-package fr.insa.hexanome.OUPS.model;
+package fr.insa.hexanome.OUPS.model.tournee;
 
 import fr.insa.hexanome.OUPS.model.dto.TourneeLivraisonDTO;
 import lombok.AllArgsConstructor;

@@ -1,14 +1,11 @@
-package fr.insa.hexanome.OUPS.model;
+package fr.insa.hexanome.OUPS.model.carte;
 
 import fr.insa.hexanome.OUPS.model.dto.CarteDTO;
 import fr.insa.hexanome.OUPS.model.dto.IntersectionDTO;
 import fr.insa.hexanome.OUPS.model.dto.VoisinDTO;
-import jakarta.persistence.Tuple;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.util.Pair;
 
 import java.util.*;
 
@@ -39,6 +36,8 @@ public class Carte {
         }
         throw new IllegalArgumentException("Intersection non trouvée");
     }
+
+
     public CarteDTO toDTO(){
 
         ArrayList<IntersectionDTO> intersectionDTOS = new ArrayList<>();

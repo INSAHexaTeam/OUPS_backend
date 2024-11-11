@@ -1,7 +1,11 @@
-package fr.insa.hexanome.OUPS.model;
+package fr.insa.hexanome.OUPS.model.tournee;
 
+import fr.insa.hexanome.OUPS.model.carte.Livraison;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.math3.ml.clustering.Clusterable;
-
+@Getter
+@Setter
 public class ClusterableLivraison implements Clusterable {
 
         private final Livraison livraison;
@@ -15,10 +19,6 @@ public class ClusterableLivraison implements Clusterable {
         @Override
         public double[] getPoint() {
             return points;
-        }
-
-        public Livraison getLivraison() {
-            return livraison;
         }
 }
 
