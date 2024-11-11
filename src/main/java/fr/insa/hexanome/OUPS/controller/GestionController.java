@@ -143,7 +143,6 @@ public class GestionController {
             @RequestBody TourneeLivraisonDTO request
     ) {
         try {
-            System.out.println(request);
             // Créer une nouvelle tournée qui contiendra les chemins calculés
             TourneeLivraison tourneeLivraisonResultat = TourneeLivraison.builder()
                     .parcoursDeLivraisons(new ArrayList<>())
@@ -153,6 +152,7 @@ public class GestionController {
             for (ParcoursDeLivraisonDTO parcoursDTO : request.getLivraisons()) {
                 // Convertir le DTO en modèle
                 DemandeLivraisons demandeLivraisons = parcoursDTO.getLivraisons().toDemandeLivraisons();
+                demandeLivraisons.removeFirst(); // On enlève l'entrepôt
 
                 // Créer un nouveau parcours pour ce coursier
                 ParcoursDeLivraison parcoursDeLivraison = ParcoursDeLivraison.builder()
@@ -286,6 +286,7 @@ public class GestionController {
             chemin.addAll(elem.getIntersections());
 
             parcoursParCoursier.setChemin(chemin);
+            solutionCourante.removeFirst(); //on enlève l'entrepot de la liste des livraisons
             parcoursParCoursier.setLivraisons(solutionCourante);
             tourneeLivraison.getParcoursDeLivraisons().add(parcoursParCoursier);
 
