@@ -133,7 +133,7 @@ public class GestionController {
 //    }
 
     @PostMapping("/graph")
-    public  ResponseEntity<List<DemandeLivraisons>>
+    public  ResponseEntity<List<List<Intersection>>>
     calculerGraph(
             @RequestBody DemandeLivraisonsDTO request
     ) throws ParserConfigurationException, IOException, SAXException {
@@ -151,35 +151,35 @@ public class GestionController {
 
 
         ArrayList<DemandeLivraisons> listeDeListe = demandeLivraisonsATransformer.split(request.getCoursier());
-        for(int i=0; i< listeDeListe.size(); i++) {
-            System.out.println(listeDeListe.get(i).size());
-        }
-        ArrayList<DemandeLivraisons> resultat = new ArrayList<>();
+        ArrayList<List<Intersection>> resultat = new ArrayList<>();
         for(DemandeLivraisons demandeLivraisonsCourante : listeDeListe){
             demandeLivraisonsCourante.addFirst(livraisonEntrepot);
-            System.out.println(demandeLivraisonsCourante.size());
             CalculItineraire test = CalculItineraire.builder()
                     .matrice(new ElemMatrice[demandeLivraisonsCourante.size()][demandeLivraisonsCourante.size()])
                     .carte(carte)
                     .livraisons(demandeLivraisonsCourante)
                     .build();
 
-            test.calculDijkstra();
+            test.calculDijkstra(); //rempli la matrice d'adjacence
 
-            TSPGraph graph = TSPGraph.builder()
+            TSPGraph graph = TSPGraph.builder() //TSP du prof
                     .carte(carte)
                     .livraisons(demandeLivraisonsCourante)
                     .matrice(test.getMatrice())
                     .build();
-            Integer[] sol = graph.getSolution();
-            DemandeLivraisons solutionCourante = new DemandeLivraisons(null);
-
+            Integer[] sol = graph.getSolution(); //sera la liste des indices des livraisons dans l'ordre de passage
+            List<Livraison> solutionCourante = new ArrayList<>();
+            List<Intersection> chemin = new ArrayList<>();
             for(int j =0;j<sol.length;j++){
                 solutionCourante.add(demandeLivraisonsCourante.get(sol[j]));
+                //récupère les chemins dans la matrice de test
+                if(j<sol.length-1){
+                    ElemMatrice elem = test.getMatrice()[sol[j]][sol[j+1]];
+                    chemin.addAll(elem.getIntersections());
+                }
             }
-            resultat.add(solutionCourante);
+            resultat.add(chemin);
         }
-
 
 
         return ResponseEntity.ok(resultat);
