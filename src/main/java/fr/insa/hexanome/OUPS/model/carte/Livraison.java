@@ -20,21 +20,22 @@ public class Livraison {
     private double distance;
     //heure d'arrivée :
     private LocalTime heureArrivee;
-    public LocalTime calculerHeureDarrivee(){
-        LocalTime heureDepart = LocalTime.of(8,0);
-        double distanceKm = distance/1000;
-        double tempsTrajet = distanceKm/15;
-        int heures = (int)tempsTrajet;
-        int minutes = (int)((tempsTrajet - heures)*60);
-        this.heureArrivee = heureDepart.plusHours(heures).plusMinutes(minutes);
-        return heureArrivee;
-    }
+
+//    public LocalTime calculerHeureDarrivee(){
+//        LocalTime heureDepart = LocalTime.of(8,0);
+//        double distanceKm = distance/1000;
+//        double tempsTrajet = distanceKm/15;
+//        int heures = (int)tempsTrajet;
+//        int minutes = (int)((tempsTrajet - heures)*60);
+//        this.heureArrivee = heureDepart.plusHours(heures).plusMinutes(minutes);
+//        return heureArrivee;
+//    }
     public LivraisonDTO toDTO() {
         return LivraisonDTO.builder()
                 .intersection(intersection != null ? intersection.toDTO() : null)
                 .estUneLivraison(estUneLivraison)
                 .distanceParcourue(distance)
-                .heureArrivee(calculerHeureDarrivee())
+                .heureArrivee(this.getHeureArrivee())
                 .build();
     }
 

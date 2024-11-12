@@ -30,7 +30,7 @@ public class ParcoursDeLivraison {
                         .map(livraison -> LivraisonDTO.builder()
                                 .intersection(livraison.getIntersection().toDTO())
                                 .distanceParcourue(livraison.getDistance())
-                                .heureArrivee(livraison.calculerHeureDarrivee())
+                                .heureArrivee(livraison.getHeureArrivee())
                                 .build())
                         .collect(Collectors.toList()))
                 .build();

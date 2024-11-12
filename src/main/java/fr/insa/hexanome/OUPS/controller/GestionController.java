@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -212,10 +213,12 @@ public class GestionController {
             Integer[] sol = graph.getSolution(); //sera la liste des indices des livraisons dans l'ordre de passage
             List<Livraison> solutionCourante = new ArrayList<>();
             List<Intersection> chemin = new ArrayList<>();
-
+            LocalTime heureArrivee = LocalTime.of(8,0);
             for(int j =0;j<sol.length;j++){
                 Livraison livraison = demandeLivraisonsCourante.get(sol[j]);
-                livraison.setDistance(test.getMatrice()[sol[j]][sol[(j+1)%sol.length]].getCout());
+                double distanceMetre = test.getMatrice()[sol[j]][sol[(j+1)%sol.length]].getCout();
+                heureArrivee = heureArrivee.plusMinutes((long) (distanceMetre/1000/15*60));
+                livraison.setHeureArrivee(heureArrivee);
                 solutionCourante.add(livraison);
                 //récupère les chemins dans la matrice de test
                 if(j<sol.length-1){
