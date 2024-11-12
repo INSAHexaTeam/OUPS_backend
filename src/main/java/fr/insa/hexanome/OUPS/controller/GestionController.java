@@ -78,6 +78,10 @@ public class GestionController {
             @RequestBody TourneeLivraisonDTO request
     ) {
         try {
+            if (request == null || request.getLivraisons() == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
             // Créer une nouvelle tournée qui contiendra les chemins calculés
             TourneeLivraison tourneeLivraisonResultat = TourneeLivraison.builder()
                     .parcoursDeLivraisons(new ArrayList<>())
@@ -85,51 +89,72 @@ public class GestionController {
 
             // Pour chaque parcours de livraison dans la requête
             for (ParcoursDeLivraisonDTO parcoursDTO : request.getLivraisons()) {
+                if (parcoursDTO == null || parcoursDTO.getLivraisons() == null) {
+                    continue;
+                }
+
                 // Convertir le DTO en modèle
                 DemandeLivraisons demandeLivraisons = parcoursDTO.getLivraisons().toDemandeLivraisons();
-                demandeLivraisons.removeFirst(); // On enlève l'entrepôt
+                if (demandeLivraisons == null || demandeLivraisons.isEmpty()) {
+                    continue;
+                }
 
                 // Créer un nouveau parcours pour ce coursier
                 ParcoursDeLivraison parcoursDeLivraison = ParcoursDeLivraison.builder()
                         .entrepot(demandeLivraisons.getEntrepot())
-                        .livraisons(demandeLivraisons)
+                        .livraisons(new ArrayList<>(demandeLivraisons))
                         .chemin(new ArrayList<>())
                         .build();
 
-                // Récupérer l'entrepôt
-                Intersection depart = demandeLivraisons.getEntrepot().getIntersection();
+                // Calculer la matrice des chemins les plus courts
+                CalculItineraire calculItineraire = CalculItineraire.builder()
+                        .matrice(new ElemMatrice[demandeLivraisons.size()][demandeLivraisons.size()])
+                        .carte(carte)
+                        .livraisons(demandeLivraisons)
+                        .build();
 
-                // Récupérer la map des intersections pour dijkstra
-                Map<Long, Intersection> intersectionsMap = carte.getIntersectionsMap();
+                calculItineraire.calculDijkstra();
 
-                // Calculer le chemin de l'entrepôt à la première livraison
-                if (!demandeLivraisons.isEmpty()) {
-                    List<Intersection> cheminInitial = ItineraireService.trouverCheminEntreDeuxIntersections(
-                            depart,
-                            demandeLivraisons.getFirst().getIntersection(),
-                            intersectionsMap
-                    );
-                    parcoursDeLivraison.getChemin().addAll(cheminInitial);
+                // Construire le chemin complet et mettre à jour les heures d'arrivée
+                List<Intersection> cheminComplet = new ArrayList<>();
+                LocalTime heureArrivee = LocalTime.of(8,0);
 
-                    // Calculer le chemin entre chaque livraison
-                    for (int i = 0; i < demandeLivraisons.size() - 1; i++) {
-                        List<Intersection> cheminLivraison = ItineraireService.trouverCheminEntreDeuxIntersections(
-                                demandeLivraisons.get(i).getIntersection(),
-                                demandeLivraisons.get(i + 1).getIntersection(),
-                                intersectionsMap
-                        );
-                        parcoursDeLivraison.getChemin().addAll(cheminLivraison);
+                // Parcourir les points dans l'ordre
+                for (int i = 0; i < demandeLivraisons.size() - 1; i++) {
+                    Livraison livraisonCourante = demandeLivraisons.get(i);
+
+                    // Mettre à jour l'heure d'arrivée
+                    if (i > 0) {
+                        ElemMatrice elemPrecedent = calculItineraire.getMatrice()[i-1][i];
+                        if (elemPrecedent != null) {
+                            double distanceMetre = elemPrecedent.getCout();
+                            heureArrivee = heureArrivee.plusMinutes((long) (distanceMetre/1000/15*60));
+                            livraisonCourante.setHeureArrivee(heureArrivee);
+                        }
                     }
 
-                    // Calculer le chemin de la dernière livraison à l'entrepôt
-                    List<Intersection> cheminFinal = ItineraireService.trouverCheminEntreDeuxIntersections(
-                            demandeLivraisons.getLast().getIntersection(),
-                            depart,
-                            intersectionsMap
-                    );
-                    parcoursDeLivraison.getChemin().addAll(cheminFinal);
+                    // Ajouter le chemin vers le point suivant
+                    ElemMatrice elem = calculItineraire.getMatrice()[i][i+1];
+                    if (elem != null && elem.getIntersections() != null) {
+                        cheminComplet.addAll(elem.getIntersections());
+                    }
                 }
 
+                // Mettre à jour l'heure d'arrivée pour le dernier point
+                if (demandeLivraisons.size() > 1) {
+                    Livraison derniereLivraison = demandeLivraisons.get(demandeLivraisons.size() - 1);
+                    ElemMatrice elemDernier = calculItineraire.getMatrice()[demandeLivraisons.size() - 2][demandeLivraisons.size() - 1];
+                    if (elemDernier != null) {
+                        double distanceFinale = elemDernier.getCout();
+                        heureArrivee = heureArrivee.plusMinutes((long) (distanceFinale/1000/15*60));
+                        derniereLivraison.setHeureArrivee(heureArrivee);
+                    }
+
+                    parcoursDeLivraison.getLivraisons().getFirst().setHeureArrivee(LocalTime.of(8,0));
+                }
+
+                // Finaliser le parcours
+                parcoursDeLivraison.setChemin(cheminComplet);
                 tourneeLivraisonResultat.getParcoursDeLivraisons().add(parcoursDeLivraison);
             }
 
