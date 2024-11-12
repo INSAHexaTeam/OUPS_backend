@@ -21,10 +21,12 @@ public class Livraison {
     //heure d'arrivée :
     private LocalTime heureArrivee;
     public LocalTime calculerHeureDarrivee(){
-        //heure depart : 8h
-        //temps de trajet : distance/15
-        //heure d'arrivée = heure de départ + temps de trajet
-        heureArrivee = LocalTime.of(8,0).plusMinutes((long) (distance/15));
+        LocalTime heureDepart = LocalTime.of(8,0);
+        double distanceKm = distance/1000;
+        double tempsTrajet = distanceKm/15;
+        int heures = (int)tempsTrajet;
+        int minutes = (int)((tempsTrajet - heures)*60);
+        this.heureArrivee = heureDepart.plusHours(heures).plusMinutes(minutes);
         return heureArrivee;
     }
     public LivraisonDTO toDTO() {
