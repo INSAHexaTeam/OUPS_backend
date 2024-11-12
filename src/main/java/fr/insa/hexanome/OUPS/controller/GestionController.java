@@ -217,7 +217,7 @@ public class GestionController {
             for(int j =0;j<sol.length;j++){
                 Livraison livraison = demandeLivraisonsCourante.get(sol[j]);
                 if (j>0){
-                    double distanceMetre = test.getMatrice()[sol[j]][sol[(j+1)%sol.length]].getCout();
+                    double distanceMetre = test.getMatrice()[sol[j-1]][sol[(j)%sol.length]].getCout();
                     heureArrivee = heureArrivee.plusMinutes((long) (distanceMetre/1000/15*60));
                     livraison.setHeureArrivee(heureArrivee);
                 }
