@@ -51,6 +51,7 @@ public class Intersection {
                         .collect(Collectors.toList()))
                 .build();
     }
+
     public static Intersection fromDTO(IntersectionDTO dto) {
         if (dto == null) return null;
         return Intersection.builder()
@@ -71,26 +72,26 @@ public class Intersection {
                 ", voisins=" + (voisins != null ? voisins.size() : "null") +
                 '}';
     }
-
-    public int aPourVoisin(Intersection intersection){
-        boolean founded = false;
-        int position = -1;
-        int i = 0;
-        while(!founded && i < this.voisins.size()){
-            Voisin voisin = intersection.getVoisins().get(i);
-            if (Objects.equals(voisin.getDestination().getId(), intersection.getId())) {
-                founded = true;
-                position = i;
-            }
-            i++;
-        }
-        return position;
-    }
-    public double getCoutEntreVoisin(Intersection intersection){
-        int position = this.aPourVoisin(intersection);
-        if (position == -1){
-            return -1;
-        }
-        return this.voisins.get(position).getLongueur();
-    }
+//
+//    public int aPourVoisin(Intersection intersection){
+//        boolean founded = false;
+//        int position = -1;
+//        int i = 0;
+//        while(!founded && i < this.voisins.size()){
+//            Voisin voisin = intersection.getVoisins().get(i);
+//            if (Objects.equals(voisin.getDestination().getId(), intersection.getId())) {
+//                founded = true;
+//                position = i;
+//            }
+//            i++;
+//        }
+//        return position;
+//    }
+//    public double getCoutEntreVoisin(Intersection intersection){
+//        int position = this.aPourVoisin(intersection);
+//        if (position == -1){
+//            return -1;
+//        }
+//        return this.voisins.get(position).getLongueur();
+//    }
 }

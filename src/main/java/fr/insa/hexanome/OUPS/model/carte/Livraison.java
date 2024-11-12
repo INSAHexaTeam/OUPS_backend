@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class Livraison {
     private Intersection intersection;
     private boolean estUneLivraison;
+    private double distance;
 
     public LivraisonDTO toDTO() {
         return LivraisonDTO.builder()

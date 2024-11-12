@@ -29,6 +29,7 @@ public class ParcoursDeLivraison {
                 .livraisons(livraisons.stream()
                         .map(livraison -> LivraisonDTO.builder()
                                 .intersection(livraison.getIntersection().toDTO())
+                                .distanceParcourue(livraison.getDistance())
                                 .build())
                         .collect(Collectors.toList()))
                 .build();

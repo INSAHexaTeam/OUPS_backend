@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class LivraisonDTO {
     private IntersectionDTO intersection;
     private boolean estUneLivraison;
+    private double distanceParcourue;
 }

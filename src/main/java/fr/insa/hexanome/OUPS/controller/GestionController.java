@@ -75,69 +75,6 @@ public class GestionController {
         }
     }
 
-
-    //todo : peut être retourné un objet Tournée (pas encore ajouté au modèle)
-//    @PostMapping("/calculerItineraireAleatoire")
-//    public  ResponseEntity<TourneeLivraisonDTO>
-//    calculerItineraireAleatoire(
-//            @RequestBody DemandeLivraisonsDTO request
-//    ) throws ParserConfigurationException, IOException, SAXException {
-//
-//        Entrepot entrepot = Entrepot.builder()
-//                .heureDepart(request.getEntrepot().getHeureDepart())
-//                .intersection(request.getEntrepot().getIntersection())
-//                .build();
-//        DemandeLivraisons demandeLivraisons = request.toLivraison();
-//        CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
-//                .entrepots(entrepot)
-//                .pointDeLivraisons(demandeLivraisons)
-//                .build();
-//        TourneeLivraison livraisonsAleatoires = calculItineraireAleatoire.getPointsDeLivraisonAleatoire(request.getCoursier());
-//        return ResponseEntity.ok(livraisonsAleatoires.toDTO());
-//    }
-//
-//    //todo : peut être retourné un objet Tournée (pas encore ajouté au modèle)
-//    @PostMapping("/calculerItineraireCluster")
-//    public  ResponseEntity<TourneeLivraisonDTO>
-//    calculerItineraireCluster(
-//            @RequestBody DemandeLivraisonsDTO request
-//    ) throws ParserConfigurationException, IOException, SAXException {
-//
-//        Entrepot entrepot = Entrepot.builder()
-//                .heureDepart(request.getEntrepot().getHeureDepart())
-//                .intersection(request.getEntrepot().getIntersection())
-//                .build();
-//        DemandeLivraisons demandeLivraisons = request.toLivraison();
-//        CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
-//                .entrepots(entrepot)
-//                .pointDeLivraisons(demandeLivraisons)
-//                .build();
-//        TourneeLivraison livraisonsAleatoires = calculItineraireAleatoire.getPointsDeLivraisonAleatoireCluster(request.getCoursier());
-//        return ResponseEntity.ok(livraisonsAleatoires.toDTO());
-//    }
-
-//    @PostMapping("/calculerItineraireClusterOptimal")
-//    public  ResponseEntity<TourneeLivraisonDTO>
-//    calculerItineraire(
-//            @RequestBody DemandeLivraisonsDTO request
-//    ) throws ParserConfigurationException, IOException, SAXException {
-//
-//        Entrepot entrepot = Entrepot.builder()
-//                .heureDepart(request.getEntrepot().getHeureDepart())
-//                .intersection(Intersection.fromDTO(request.getEntrepot().getIntersection()))
-//                .build();
-//
-//        DemandeLivraisons demandeLivraisons = request.toDemandeLivraisons();
-//        CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
-//                .entrepots(entrepot)
-//                .pointDeLivraisons(demandeLivraisons)
-//                .build();
-//        TourneeLivraison livraisonsOptimales = calculItineraireAleatoire.getPointsDeLivraisonClusterOptimise(request.getCoursier(),carte.getIntersectionsMap());
-//        System.out.println(livraisonsOptimales);
-//        return ResponseEntity.ok(livraisonsOptimales.toDTO());
-//    }
-
-
     @PostMapping("/calculerItineraireOrdonne")
     public ResponseEntity<TourneeLivraisonDTO> calculItineraireOrdonne(
             @RequestBody TourneeLivraisonDTO request
@@ -171,7 +108,7 @@ public class GestionController {
                 if (!demandeLivraisons.isEmpty()) {
                     List<Intersection> cheminInitial = ItineraireService.trouverCheminEntreDeuxIntersections(
                             depart,
-                            demandeLivraisons.get(0).getIntersection(),
+                            demandeLivraisons.getFirst().getIntersection(),
                             intersectionsMap
                     );
                     parcoursDeLivraison.getChemin().addAll(cheminInitial);
@@ -188,7 +125,7 @@ public class GestionController {
 
                     // Calculer le chemin de la dernière livraison à l'entrepôt
                     List<Intersection> cheminFinal = ItineraireService.trouverCheminEntreDeuxIntersections(
-                            demandeLivraisons.get(demandeLivraisons.size() - 1).getIntersection(),
+                            demandeLivraisons.getLast().getIntersection(),
                             depart,
                             intersectionsMap
                     );
@@ -271,11 +208,15 @@ public class GestionController {
                     .livraisons(demandeLivraisonsCourante)
                     .matrice(test.getMatrice())
                     .build();
+
             Integer[] sol = graph.getSolution(); //sera la liste des indices des livraisons dans l'ordre de passage
             List<Livraison> solutionCourante = new ArrayList<>();
             List<Intersection> chemin = new ArrayList<>();
+
             for(int j =0;j<sol.length;j++){
-                solutionCourante.add(demandeLivraisonsCourante.get(sol[j]));
+                Livraison livraison = demandeLivraisonsCourante.get(sol[j]);
+                livraison.setDistance(test.getMatrice()[sol[j]][sol[(j+1)%sol.length]].getCout());
+                solutionCourante.add(livraison);
                 //récupère les chemins dans la matrice de test
                 if(j<sol.length-1){
                     ElemMatrice elem = test.getMatrice()[sol[j]][sol[j+1]];
