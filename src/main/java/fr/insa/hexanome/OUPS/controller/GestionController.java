@@ -26,10 +26,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static fr.insa.hexanome.OUPS.services.ItineraireService.trouverCheminEntreDeuxIntersections;
 
@@ -159,6 +156,7 @@ public class GestionController {
         Livraison livraisonEntrepot = Livraison.builder()
                 .intersection(entrepot.getIntersection())
                 .estUneLivraison(false)
+                .heureArrivee(LocalTime.of(8,0))
                 .build();
 
         if (livraisonEntrepot.getIntersection() == null) {
@@ -195,7 +193,7 @@ public class GestionController {
                     .build();
 
             demandeLivraisonsCourante.addFirst(livraisonEntrepot);
-            demandeLivraisonsCourante.addLast(livraisonEntrepot);
+
             CalculItineraire test = CalculItineraire.builder()
                     .matrice(new ElemMatrice[demandeLivraisonsCourante.size()][demandeLivraisonsCourante.size()])
                     .carte(carte)
@@ -212,6 +210,10 @@ public class GestionController {
                     .build();
 
             Integer[] sol = graph.getSolution(); //sera la liste des indices des livraisons dans l'ordre de passage
+            demandeLivraisonsCourante.addLast(livraisonEntrepot); //on ajoute l'entrepot à la fin
+            sol = Arrays.copyOf(sol,sol.length+1);
+            sol[sol.length-1] = sol[0]; //on revient à l'entrepot
+
             List<Livraison> solutionCourante = new ArrayList<>();
             List<Intersection> chemin = new ArrayList<>();
             LocalTime heureArrivee = LocalTime.of(8,0);
@@ -229,8 +231,16 @@ public class GestionController {
                     chemin.addAll(elem.getIntersections());
                 }
             }
-//            ElemMatrice elem = test.getMatrice()[sol[sol.length-1]][sol[0]];
-//            chemin.addAll(elem.getIntersections());
+            ElemMatrice elem = test.getMatrice()[sol[sol.length-1]][sol[0]];//pour aller du dernier à l'entrepot
+
+            Livraison livraison = demandeLivraisonsCourante.get(sol[sol.length-1]);//on récupère la dernière livraiso (l'entrepot)
+            double distanceMetre = test.getMatrice()[sol[sol.length-1]][sol[(0)]].getCout();//on récupère la distance entre entrepot et dernière livraison
+            heureArrivee = heureArrivee.plusMinutes((long) (distanceMetre/1000/15*60));
+            livraison.setHeureArrivee(heureArrivee);
+            chemin.addAll(elem.getIntersections());
+
+
+
 
             parcoursParCoursier.setChemin(chemin);
 //            solutionCourante.removeFirst(); //on enlève l'entrepot de la liste des livraisons
