@@ -195,6 +195,7 @@ public class GestionController {
                     .build();
 
             demandeLivraisonsCourante.addFirst(livraisonEntrepot);
+            demandeLivraisonsCourante.addLast(livraisonEntrepot);
             CalculItineraire test = CalculItineraire.builder()
                     .matrice(new ElemMatrice[demandeLivraisonsCourante.size()][demandeLivraisonsCourante.size()])
                     .carte(carte)
@@ -228,11 +229,11 @@ public class GestionController {
                     chemin.addAll(elem.getIntersections());
                 }
             }
-            ElemMatrice elem = test.getMatrice()[sol[sol.length-1]][sol[0]];
-            chemin.addAll(elem.getIntersections());
+//            ElemMatrice elem = test.getMatrice()[sol[sol.length-1]][sol[0]];
+//            chemin.addAll(elem.getIntersections());
 
             parcoursParCoursier.setChemin(chemin);
-            solutionCourante.removeFirst(); //on enlève l'entrepot de la liste des livraisons
+//            solutionCourante.removeFirst(); //on enlève l'entrepot de la liste des livraisons
             parcoursParCoursier.setLivraisons(solutionCourante);
             tourneeLivraison.getParcoursDeLivraisons().add(parcoursParCoursier);
 
