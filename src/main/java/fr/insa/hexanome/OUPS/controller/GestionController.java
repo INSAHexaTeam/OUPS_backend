@@ -216,9 +216,11 @@ public class GestionController {
             LocalTime heureArrivee = LocalTime.of(8,0);
             for(int j =0;j<sol.length;j++){
                 Livraison livraison = demandeLivraisonsCourante.get(sol[j]);
-                double distanceMetre = test.getMatrice()[sol[j]][sol[(j+1)%sol.length]].getCout();
-                heureArrivee = heureArrivee.plusMinutes((long) (distanceMetre/1000/15*60));
-                livraison.setHeureArrivee(heureArrivee);
+                if (j>0){
+                    double distanceMetre = test.getMatrice()[sol[j]][sol[(j+1)%sol.length]].getCout();
+                    heureArrivee = heureArrivee.plusMinutes((long) (distanceMetre/1000/15*60));
+                    livraison.setHeureArrivee(heureArrivee);
+                }
                 solutionCourante.add(livraison);
                 //récupère les chemins dans la matrice de test
                 if(j<sol.length-1){
