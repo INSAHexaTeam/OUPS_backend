@@ -88,7 +88,9 @@ public class CalculItineraire {
         return new ElemMatrice(Double.MAX_VALUE, null);
     }
 
-
+    /**
+     * Calcul le dijkstra pour chaque éléments de la matrice
+     */
     public void calculDijkstra(){
         //boucle pour remplir la matrice avec les elemMatrice
         for(int i = 0; i < this.livraisons.size(); i++){

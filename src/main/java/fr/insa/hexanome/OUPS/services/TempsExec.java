@@ -2,6 +2,9 @@ package fr.insa.hexanome.OUPS.services;
 
 import lombok.Getter;
 
+/**
+ * Calcul des temps d'exécution pour optimisation
+ */
 @Getter
 public class TempsExec {
     private long tempsExec;

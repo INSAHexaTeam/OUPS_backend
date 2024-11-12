@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ *  (Objet métier) permet la manipulation de données de type intersection
+ */
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -40,6 +44,11 @@ public class Intersection {
         this.voisins.add(voisin);
     }
 
+    /**
+     * Transforme l'objet Intersection en IntersectionDTO
+     * @return l'intersectionDTO
+     */
+
     public IntersectionDTO toDTO() {
         return IntersectionDTO.builder()
                 .id(this.id)
@@ -50,6 +59,12 @@ public class Intersection {
                         .collect(Collectors.toList()))
                 .build();
     }
+
+    /**
+     * @param dto transforme le dto en entrepot
+     * @return l'entrepot
+     */
+
     public static Intersection fromDTO(IntersectionDTO dto) {
         if (dto == null) return null;
         return Intersection.builder()

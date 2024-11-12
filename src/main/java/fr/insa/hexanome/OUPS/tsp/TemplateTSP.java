@@ -10,7 +10,12 @@ public abstract class TemplateTSP implements TSP {
 	private int bestSolCost;
 	private int timeLimit;
 	private long startTime;
-	
+
+	/**
+	 * recherche la solution dans le graph en utilisant branch and bound
+	 * @param timeLimit vérifie qu'on ne dépasse pas timelimit
+	 * @param
+	 */
 	public void searchSolution(int timeLimit, Graph g){
 		if (timeLimit <= 0) return;
 		startTime = System.currentTimeMillis();	
@@ -31,12 +36,20 @@ public abstract class TemplateTSP implements TSP {
 		return -1;
 	}
 
+	/**
+	 * Renvoi l'intégraliter des livraisons
+	 * @return
+	 */
 	public Integer[] getFullSolution(){
 		if (g != null)
 			return bestSol;
 		return null;
 	}
-	
+
+	/**
+	 * permet d'obtenir le cout de la meilleure solution
+	 * @return le meilleur cout
+	 */
 	public int getSolutionCost(){
 		if (g != null)
 			return bestSolCost;

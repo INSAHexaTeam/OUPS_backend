@@ -185,7 +185,11 @@ public class GestionController {
 //        return ResponseEntity.ok(livraisonsOptimales.toDTO());
 //    }
 
-
+    /**
+     * Calcul de l'itinéraire lors d'une suppression après calcul
+      * @param request tournée de livraison à ordonner
+     *
+     */
     @PostMapping("/calculerItineraireOrdonne")
     public ResponseEntity<TourneeLivraisonDTO> calculItineraireOrdonne(
             @RequestBody TourneeLivraisonDTO request
@@ -254,6 +258,14 @@ public class GestionController {
         }
     }
 
+    /**
+     * Calcul des livraisons optimales
+     * @param request les demandes de livraisons
+     * @return
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws SAXException
+     */
     @PostMapping("/graph")
     public  ResponseEntity<TourneeLivraisonDTO>
     calculerGraph(

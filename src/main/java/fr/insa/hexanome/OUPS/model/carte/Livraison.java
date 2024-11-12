@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Objet métier) permet la manipulation de données de type Livraison
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -14,12 +17,22 @@ public class Livraison {
     private Intersection intersection;
     private boolean estUneLivraison;
 
+    /**
+     * Transforme l'objet livraison en DTO
+     * @return le DTO
+     */
     public LivraisonDTO toDTO() {
         return LivraisonDTO.builder()
                 .intersection(intersection != null ? intersection.toDTO() : null)
                 .estUneLivraison(estUneLivraison)
                 .build();
     }
+
+    /**
+     *
+     * @param dto Transforme l'objet LivraisonDTO en livraison
+     * @return
+     */
 
     public static Livraison fromDTO(LivraisonDTO dto) {
         if (dto == null) return null;

@@ -4,6 +4,10 @@ import fr.insa.hexanome.OUPS.model.carte.Livraison;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.math3.ml.clustering.Clusterable;
+
+/**
+ * Gère les clusters
+ */
 @Getter
 @Setter
 public class ClusterableLivraison implements Clusterable {

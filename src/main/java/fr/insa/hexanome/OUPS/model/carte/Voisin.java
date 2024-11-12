@@ -27,6 +27,10 @@ public class Voisin {
                 '}';
     }
 
+    /**
+     * Trandsforme l'objet Voisin en DTO
+     * @return le DTO
+     */
     public VoisinDTO toDTO() {
         Intersection tempDest = Intersection.builder()
                 .voisins(
@@ -47,6 +51,11 @@ public class Voisin {
                 .build();
     }
 
+    /**
+     *
+     * @param dto Transforme l'objet VoisinDTO en un voisin
+     * @return le voisin
+     */
     public static Voisin fromDTO(VoisinDTO dto) {
         if (dto == null) return null;
         return Voisin.builder()
