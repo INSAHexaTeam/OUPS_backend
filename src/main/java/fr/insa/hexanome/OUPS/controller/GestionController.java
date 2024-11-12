@@ -106,7 +106,6 @@ public class GestionController {
                     Livraison livraison = Livraison.builder()
                             .intersection(carte.trouverIntersectionParId(livraisonDTO.getIntersection().getId()))
                             .estUneLivraison(true)
-                            .heureArrivee(livraisonDTO.getHeureArrivee())
                             .build();
                     livraisonsCompletes.add(livraison);
                 }
@@ -121,9 +120,9 @@ public class GestionController {
 
                 // Calculer la matrice des chemins les plus courts
                 CalculItineraire calculItineraire = CalculItineraire.builder()
-                        .matrice(new ElemMatrice[demandeLivraisons.size()][demandeLivraisons.size()])
+                        .matrice(new ElemMatrice[livraisonsCompletes.size()][livraisonsCompletes.size()])
                         .carte(carte)
-                        .livraisons(demandeLivraisons)
+                        .livraisons(livraisonsCompletes)
                         .build();
 
                 calculItineraire.calculDijkstra();
@@ -133,8 +132,8 @@ public class GestionController {
                 LocalTime heureArrivee = LocalTime.of(8,0);
 
                 // Parcourir les points dans l'ordre
-                for (int i = 0; i < demandeLivraisons.size() - 1; i++) {
-                    Livraison livraisonCourante = demandeLivraisons.get(i);
+                for (int i = 0; i < livraisonsCompletes.size() - 1; i++) {
+                    Livraison livraisonCourante = livraisonsCompletes.get(i);
 
                     // Mettre à jour l'heure d'arrivée
                     if (i > 0) {
@@ -154,9 +153,9 @@ public class GestionController {
                 }
 
                 // Mettre à jour l'heure d'arrivée pour le dernier point
-                if (demandeLivraisons.size() > 1) {
-                    Livraison derniereLivraison = demandeLivraisons.get(demandeLivraisons.size() - 1);
-                    ElemMatrice elemDernier = calculItineraire.getMatrice()[demandeLivraisons.size() - 2][demandeLivraisons.size() - 1];
+                if (livraisonsCompletes.size() > 1) {
+                    Livraison derniereLivraison = livraisonsCompletes.get(livraisonsCompletes.size() - 1);
+                    ElemMatrice elemDernier = calculItineraire.getMatrice()[livraisonsCompletes.size() - 2][livraisonsCompletes.size() - 1];
                     if (elemDernier != null) {
                         double distanceFinale = elemDernier.getCout();
                         heureArrivee = heureArrivee.plusMinutes((long) (distanceFinale/1000/15*60));
