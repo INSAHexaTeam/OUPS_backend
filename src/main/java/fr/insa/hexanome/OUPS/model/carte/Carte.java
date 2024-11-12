@@ -1,19 +1,13 @@
-package fr.insa.hexanome.OUPS.model;
+package fr.insa.hexanome.OUPS.model.carte;
 
 import fr.insa.hexanome.OUPS.model.dto.CarteDTO;
 import fr.insa.hexanome.OUPS.model.dto.IntersectionDTO;
 import fr.insa.hexanome.OUPS.model.dto.VoisinDTO;
-import jakarta.persistence.Tuple;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.util.Pair;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * (Objet métier) permet la manipulation de données de type carte
@@ -23,6 +17,14 @@ import java.util.Objects;
 @Builder
 public class Carte {
     private List<Intersection> intersections;
+
+    public Map<Long,Intersection> getIntersectionsMap(){
+        Map<Long,Intersection> intersectionsMap = new HashMap<>();
+        for(Intersection i : this.intersections){
+            intersectionsMap.put(i.getId(),i);
+        }
+        return intersectionsMap;
+    }
     public Carte() {
         this.intersections = new ArrayList<>();
     }

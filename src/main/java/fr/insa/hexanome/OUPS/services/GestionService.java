@@ -1,10 +1,8 @@
 package fr.insa.hexanome.OUPS.services;
 
-import fr.insa.hexanome.OUPS.model.Carte;
-import fr.insa.hexanome.OUPS.model.Livraisons;
+import fr.insa.hexanome.OUPS.model.carte.Carte;
+import fr.insa.hexanome.OUPS.model.tournee.DemandeLivraisons;
 import fr.insa.hexanome.OUPS.model.exception.FileExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
@@ -12,9 +10,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -46,6 +41,7 @@ public class GestionService {
      * @throws SAXException Erreur dans le parse du XML
      */
     public Carte chargerCarteDepuisXML(EtatType etat, MultipartFile fichier, String cheminVersFichier) throws ParserConfigurationException, IOException, SAXException {
+        //todo : il faut vider les livraisons si on change la carte
         while(true){
             switch (etat){
                 case ENREGISTREMENT -> {
@@ -82,7 +78,7 @@ public class GestionService {
      * @throws IOException Fichier introuvable
      * @throws SAXException Erreur dans le parse du XML
      */
-    public Livraisons chargerLivraisonsDepuisXML(EtatType etat, MultipartFile fichier, String cheminVersFichier) throws ParserConfigurationException, IOException, SAXException {
+    public DemandeLivraisons chargerLivraisonsDepuisXML(EtatType etat, MultipartFile fichier, String cheminVersFichier) throws ParserConfigurationException, IOException, SAXException {
         while(true){
             switch (etat){
                 case ENREGISTREMENT -> {

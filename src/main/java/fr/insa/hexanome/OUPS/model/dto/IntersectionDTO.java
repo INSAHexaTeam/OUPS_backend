@@ -1,7 +1,5 @@
 package fr.insa.hexanome.OUPS.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import fr.insa.hexanome.OUPS.model.Voisin;
 import lombok.Builder;
 import lombok.Data;
 
