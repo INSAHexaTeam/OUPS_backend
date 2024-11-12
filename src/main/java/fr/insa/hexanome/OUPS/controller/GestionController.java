@@ -99,10 +99,23 @@ public class GestionController {
                     continue;
                 }
 
+                //Intersection.fromDTO(livraisonDTO.getIntersection())
+
+                List<Livraison> livraisonsCompletes = new ArrayList<>();
+                for (LivraisonDTO livraisonDTO : parcoursDTO.getLivraisons().getLivraisons()) {
+                    Livraison livraison = Livraison.builder()
+                            .intersection(carte.trouverIntersectionParId(livraisonDTO.getIntersection().getId()))
+                            .estUneLivraison(true)
+                            .heureArrivee(livraisonDTO.getHeureArrivee())
+                            .build();
+                    livraisonsCompletes.add(livraison);
+                }
+
+
                 // Créer un nouveau parcours pour ce coursier
                 ParcoursDeLivraison parcoursDeLivraison = ParcoursDeLivraison.builder()
                         .entrepot(demandeLivraisons.getEntrepot())
-                        .livraisons(new ArrayList<>(demandeLivraisons))
+                        .livraisons(new ArrayList<>(livraisonsCompletes))
                         .chemin(new ArrayList<>())
                         .build();
 
