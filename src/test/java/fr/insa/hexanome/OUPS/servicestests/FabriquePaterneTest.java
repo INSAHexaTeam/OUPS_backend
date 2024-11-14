@@ -18,6 +18,7 @@ import java.io.IOException;
 class FabriquePaterneTest {
 
     private FabriquePaterne fabriquePaterne;
+    private Livraisons livraisons;
 
     @BeforeEach
     public void telechargerXml() throws ParserConfigurationException, IOException, SAXException {
@@ -25,7 +26,10 @@ class FabriquePaterneTest {
         // Code excecuté avant de tout
         String filePath = "src/main/resources/fichiersXMLPickupDelivery/petitPlan.xml";
         fabriquePaterne.chargePlan(filePath);
-        System.out.println("XML a eté telechargé...");
+        System.out.println("XML plan a eté telechargé...");
+        String filePathDemande = "src/main/resources/fichiersXMLPickupDelivery/myDeliverRequestTest.xml";
+        livraisons = fabriquePaterne.chargerDemande(filePathDemande);
+        System.out.println("XML demande a eté telechargé...");
     }
 
 
@@ -69,10 +73,9 @@ class FabriquePaterneTest {
 
     @Test
     void verifierRouteFichier() {
-        //TODO Exception devrait avoir un message
         IOException exception = assertThrows(IOException.class, () -> {
             fabriquePaterne = new FabriquePaterne();
-            String filePath = "mauveseroute";
+            String filePath = "mauvaiseroute";
             fabriquePaterne.chargePlan(filePath);
         });
         assertInstanceOf(FileNotFoundException.class, exception);
@@ -80,13 +83,39 @@ class FabriquePaterneTest {
 
     @Test
     void verifierFormatXML() {
-        //TODO Exception devrait avoir un message
         assertThrows(SAXException.class, () -> {
             fabriquePaterne = new FabriquePaterne();
             String filePath = "src/main/resources/fichiersXMLPickupDelivery/mauveseFichier.xml";
             fabriquePaterne.chargePlan(filePath);
         });
     }
+
+    @Test
+    void verifierChargerDemandeSansCarte() {
+        FabriquePaterne nouvellefabriquePaterne = new FabriquePaterne();;
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            Livraisons l = nouvellefabriquePaterne.chargerDemande("src/main/resources/fichiersXMLPickupDelivery/myDeliverRequest.xml");
+        });
+        assertEquals("Carte non chargée", exception.getMessage());
+    }
+
+    @Test
+    void verifierTousLivraisons() {
+        assertEquals(9, livraisons.size(), "Tous les 9 livraisons ont été ajoutés");
+    }
+
+    @Test
+    void verifierEntrepot() {
+        Entrepot entrepot = livraisons.getEntrepot();
+        assertEquals(26086307L, entrepot.getIntersection().getId(),"id intersection correct");
+        assertEquals("08:00", entrepot.getHeureDepart(),"heure depart correct");
+    }
+
+    @Test
+    void verifierPremierLivraison() {
+        assertEquals(2129259176L, livraisons.getFirst().getAdresseLivraison().getId(),"id intersection correct");
+    }
+
 
 }
 
