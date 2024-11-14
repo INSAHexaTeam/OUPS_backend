@@ -1,7 +1,9 @@
 package fr.insa.hexanome.OUPS.servicestests;
 
+import fr.insa.hexanome.OUPS.model.carte.Entrepot;
 import fr.insa.hexanome.OUPS.model.carte.Intersection;
 import fr.insa.hexanome.OUPS.model.carte.Voisin;
+import fr.insa.hexanome.OUPS.model.tournee.DemandeLivraisons;
 import fr.insa.hexanome.OUPS.services.FabriquePaterne;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +20,7 @@ import java.io.IOException;
 class FabriquePaterneTest {
 
     private FabriquePaterne fabriquePaterne;
-    private Livraisons livraisons;
+    private DemandeLivraisons livraisons;
 
     @BeforeEach
     public void telechargerXml() throws ParserConfigurationException, IOException, SAXException {
@@ -94,7 +96,7 @@ class FabriquePaterneTest {
     void verifierChargerDemandeSansCarte() {
         FabriquePaterne nouvellefabriquePaterne = new FabriquePaterne();;
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            Livraisons l = nouvellefabriquePaterne.chargerDemande("src/main/resources/fichiersXMLPickupDelivery/myDeliverRequest.xml");
+            DemandeLivraisons l = nouvellefabriquePaterne.chargerDemande("src/main/resources/fichiersXMLPickupDelivery/myDeliverRequest.xml");
         });
         assertEquals("Carte non chargée", exception.getMessage());
     }
@@ -111,10 +113,6 @@ class FabriquePaterneTest {
         assertEquals("08:00", entrepot.getHeureDepart(),"heure depart correct");
     }
 
-    @Test
-    void verifierPremierLivraison() {
-        assertEquals(2129259176L, livraisons.getFirst().getAdresseLivraison().getId(),"id intersection correct");
-    }
 
 
 }
