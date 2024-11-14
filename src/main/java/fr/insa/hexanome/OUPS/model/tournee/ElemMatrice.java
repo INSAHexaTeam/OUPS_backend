@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Représente un élément des matrices pour les TSP
+ */
 @Builder
 @Data
 public class ElemMatrice {

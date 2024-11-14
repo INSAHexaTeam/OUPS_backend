@@ -6,12 +6,13 @@ import fr.insa.hexanome.OUPS.model.carte.Voisin;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Calcul d'itinéraire entre deux intersections
+ */
+
 public class ItineraireService {
 
     public static List<Intersection> trouverCheminEntreDeuxIntersections(Intersection depart, Intersection arrivee, Map<Long, Intersection> carte) {
-        // Debug
-//        System.out.println("Recherche de chemin de " + depart.getId() + " vers " + arrivee.getId());
-//        System.out.println("Voisins du point de départ : " + (depart.getVoisins() != null ? depart.getVoisins().size() : "null"));
 
         Map<Long, Double> distances = new HashMap<>();
         Map<Long, Long> previous = new HashMap<>();

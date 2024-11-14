@@ -17,6 +17,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+/**
+ * (Service) (Singleton) permet de gérer les différentes requête venant du frontend
+ */
 @Service
 public class GestionService {
 
@@ -27,6 +30,16 @@ public class GestionService {
 
     }
 
+    /**
+     * Responsable du code métier permettant de charger un fichier XML. Il fait appel a la fabrique patterne pour instancier les objets
+     * @param etat Etat du chargement
+     * @param fichier (Nullable) fichier a enregistrer
+     * @param cheminVersFichier (Nullable) chemin vers le fichier
+     * @return une Carte
+     * @throws ParserConfigurationException Erreur dans la formation du XML
+     * @throws IOException Fichier introuvable
+     * @throws SAXException Erreur dans le parse du XML
+     */
     public Carte chargerCarteDepuisXML(EtatType etat, MultipartFile fichier, String cheminVersFichier) throws ParserConfigurationException, IOException, SAXException {
         //todo : il faut vider les livraisons si on change la carte
         while(true){
@@ -55,7 +68,16 @@ public class GestionService {
         }
     }
 
-
+    /**
+     * Responsable du code métier permettant de charger un fichier XML. Il fait appel a la fabrique patterne pour instancier les objets
+     * @param etat Etat du chargement
+     * @param fichier (Nullable) fichier a enregistrer
+     * @param cheminVersFichier (Nullable) chemin vers le fichier
+     * @return une Carte
+     * @throws ParserConfigurationException Erreur dans la formation du XML
+     * @throws IOException Fichier introuvable
+     * @throws SAXException Erreur dans le parse du XML
+     */
     public DemandeLivraisons chargerLivraisonsDepuisXML(EtatType etat, MultipartFile fichier, String cheminVersFichier) throws ParserConfigurationException, IOException, SAXException {
         while(true){
             switch (etat){
@@ -82,8 +104,12 @@ public class GestionService {
             }
         }
     }
-    
-    //Secure XML upload
+
+    /**
+     * Enregistre de manière sécurisé des fichiers XML en local
+     * @param fichier fichier à enregistrer
+     * @throws IOException emplacement introuvable ou trop volumineux
+     */
     private void enregistrement(MultipartFile fichier) throws IOException {
     // Vérification de l'extension du fichier doit être .xml
         if (!Objects.requireNonNull(fichier.getOriginalFilename()).toLowerCase().endsWith(".xml")) {

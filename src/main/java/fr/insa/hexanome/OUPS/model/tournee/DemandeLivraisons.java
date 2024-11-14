@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Gère les demandes de livraisons
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
@@ -29,6 +32,11 @@ public class DemandeLivraisons extends ArrayList<Livraison> {
                 .build();
     }
 
+    /**
+     * split les listes de livraisons en un nombre nbCOursiers de sous listes
+     * @param nbCoursiers
+     * @return
+     */
     public ArrayList<DemandeLivraisons> split(int nbCoursiers) {
         ArrayList<DemandeLivraisons> result = new ArrayList<>();
         for (int i = 0; i < nbCoursiers; i++) {

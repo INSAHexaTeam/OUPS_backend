@@ -6,6 +6,7 @@ import fr.insa.hexanome.OUPS.model.dto.*;
 import fr.insa.hexanome.OUPS.model.carte.Carte;
 import fr.insa.hexanome.OUPS.model.carte.Entrepot;
 import fr.insa.hexanome.OUPS.model.carte.Intersection;
+import fr.insa.hexanome.OUPS.model.exception.FileExtension;
 import fr.insa.hexanome.OUPS.model.tournee.*;
 import fr.insa.hexanome.OUPS.services.CalculItineraire;
 import fr.insa.hexanome.OUPS.services.EtatType;
@@ -19,6 +20,10 @@ import org.apache.commons.math3.ml.clustering.Cluster;
 import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
 import org.apache.commons.math3.ml.distance.EuclideanDistance;
 import org.apache.commons.math3.random.RandomGenerator;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,10 +35,17 @@ import java.util.*;
 
 import static fr.insa.hexanome.OUPS.services.ItineraireService.trouverCheminEntreDeuxIntersections;
 
+/**
+ * Cette classe représente le point de liaison entre le frontend et le backend
+ */
 @RestController
 @RequestMapping("/carte")
 public class GestionController {
-    GestionService service;
+
+    private final GestionService service;
+    /**
+     * @param service service pour la gestion des livraisons et des map
+     */
     public GestionController(GestionService service) {
         this.service = service;
     }
@@ -41,6 +53,35 @@ public class GestionController {
     private Carte carte;
 
 
+    /**
+     * Chargement des plans
+     *
+     * @param stringEtat etat du chargement (CHARGEMENT,ENREGISTREMENT,ENREGISTREMENT_SIMPLE)
+     * @param fichier Fichier XML a charger
+     * @param cheminVersFichier CheminVersFichier à charger
+     */
+    @Operation(
+            summary = "Charger un fichier",
+            description = "Charger un plan XML",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Fichier chargé avec succès",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CarteDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Erreur de validation",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = FileExtension.class)
+                            )
+                    )
+            }
+    )
     @PostMapping("/charger")
     public ResponseEntity<CarteDTO> charger(
             @RequestParam("etat") String stringEtat,
@@ -53,6 +94,13 @@ public class GestionController {
         return ResponseEntity.ok(carteRequest.toDTO());
     }
 
+    /**
+     * Chargement des demandes
+     *
+     * @param stringEtat etat du chargement (CHARGEMENT,ENREGISTREMENT,ENREGISTREMENT_SIMPLE)
+     * @param fichier Fichier XML a charger
+     * @param cheminVersFichier CheminVersFichier à charger
+     */
     @PostMapping("/livraisons")
     public ResponseEntity<?> livraisons(
             @RequestParam("etat") String stringEtat,
@@ -73,6 +121,73 @@ public class GestionController {
         }
     }
 
+
+    //todo : peut être retourné un objet Tournée (pas encore ajouté au modèle)
+//    @PostMapping("/calculerItineraireAleatoire")
+//    public  ResponseEntity<TourneeLivraisonDTO>
+//    calculerItineraireAleatoire(
+//            @RequestBody DemandeLivraisonsDTO request
+//    ) throws ParserConfigurationException, IOException, SAXException {
+//
+//        Entrepot entrepot = Entrepot.builder()
+//                .heureDepart(request.getEntrepot().getHeureDepart())
+//                .intersection(request.getEntrepot().getIntersection())
+//                .build();
+//        DemandeLivraisons demandeLivraisons = request.toLivraison();
+//        CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
+//                .entrepots(entrepot)
+//                .pointDeLivraisons(demandeLivraisons)
+//                .build();
+//        TourneeLivraison livraisonsAleatoires = calculItineraireAleatoire.getPointsDeLivraisonAleatoire(request.getCoursier());
+//        return ResponseEntity.ok(livraisonsAleatoires.toDTO());
+//    }
+//
+//    //todo : peut être retourné un objet Tournée (pas encore ajouté au modèle)
+//    @PostMapping("/calculerItineraireCluster")
+//    public  ResponseEntity<TourneeLivraisonDTO>
+//    calculerItineraireCluster(
+//            @RequestBody DemandeLivraisonsDTO request
+//    ) throws ParserConfigurationException, IOException, SAXException {
+//
+//        Entrepot entrepot = Entrepot.builder()
+//                .heureDepart(request.getEntrepot().getHeureDepart())
+//                .intersection(request.getEntrepot().getIntersection())
+//                .build();
+//        DemandeLivraisons demandeLivraisons = request.toLivraison();
+//        CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
+//                .entrepots(entrepot)
+//                .pointDeLivraisons(demandeLivraisons)
+//                .build();
+//        TourneeLivraison livraisonsAleatoires = calculItineraireAleatoire.getPointsDeLivraisonAleatoireCluster(request.getCoursier());
+//        return ResponseEntity.ok(livraisonsAleatoires.toDTO());
+//    }
+
+//    @PostMapping("/calculerItineraireClusterOptimal")
+//    public  ResponseEntity<TourneeLivraisonDTO>
+//    calculerItineraire(
+//            @RequestBody DemandeLivraisonsDTO request
+//    ) throws ParserConfigurationException, IOException, SAXException {
+//
+//        Entrepot entrepot = Entrepot.builder()
+//                .heureDepart(request.getEntrepot().getHeureDepart())
+//                .intersection(Intersection.fromDTO(request.getEntrepot().getIntersection()))
+//                .build();
+//
+//        DemandeLivraisons demandeLivraisons = request.toDemandeLivraisons();
+//        CalculItineraire calculItineraireAleatoire = CalculItineraire.builder()
+//                .entrepots(entrepot)
+//                .pointDeLivraisons(demandeLivraisons)
+//                .build();
+//        TourneeLivraison livraisonsOptimales = calculItineraireAleatoire.getPointsDeLivraisonClusterOptimise(request.getCoursier(),carte.getIntersectionsMap());
+//        System.out.println(livraisonsOptimales);
+//        return ResponseEntity.ok(livraisonsOptimales.toDTO());
+//    }
+
+    /**
+     * Calcul de l'itinéraire lors d'une suppression après calcul
+      * @param request tournée de livraison à ordonner
+     *
+     */
     @PostMapping("/calculerItineraireOrdonne")
     public ResponseEntity<TourneeLivraisonDTO> calculItineraireOrdonne(
             @RequestBody TourneeLivraisonDTO request
@@ -178,6 +293,14 @@ public class GestionController {
         }
     }
 
+    /**
+     * Calcul des livraisons optimales
+     * @param request les demandes de livraisons
+     * @return
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws SAXException
+     */
     @PostMapping("/graph")
     public  ResponseEntity<TourneeLivraisonDTO>
     calculerGraph(

@@ -12,6 +12,9 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Tests unitaires pour la carte
+ */
 public class CarteTest {
 
     private FabriquePaterne fabriquePaterne;

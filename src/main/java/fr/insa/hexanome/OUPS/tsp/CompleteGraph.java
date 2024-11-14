@@ -1,5 +1,8 @@
 package fr.insa.hexanome.OUPS.tsp;
 
+/**
+ * Calcul du TSP
+ */
 public class CompleteGraph implements Graph {
 	private static final int MAX_COST = 40;
 	private static final int MIN_COST = 10;

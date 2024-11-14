@@ -1,4 +1,7 @@
 package fr.insa.hexanome.OUPS.model.tournee;
+/**
+ * Objet TSP Graph utilisé pour le calcul TSP
+ */
 
 import fr.insa.hexanome.OUPS.model.carte.Carte;
 import fr.insa.hexanome.OUPS.model.carte.Intersection;

@@ -12,6 +12,10 @@ import lombok.Data;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Parcours que dois faire un seul coursier
+ * est composé d'un entrepot, d'une liste de livraison et d'une liste de chemin a parcourir
+ */
 @Data
 @Builder
 public class ParcoursDeLivraison {

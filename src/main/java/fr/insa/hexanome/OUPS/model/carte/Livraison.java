@@ -5,11 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+/**
+ * Objet métier) permet la manipulation de données de type Livraison
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -21,6 +23,7 @@ public class Livraison {
     //heure d'arrivée :
     private LocalTime heureArrivee;
 
+
 //    public LocalTime calculerHeureDarrivee(){
 //        LocalTime heureDepart = LocalTime.of(8,0);
 //        double distanceKm = distance/1000;
@@ -30,6 +33,10 @@ public class Livraison {
 //        this.heureArrivee = heureDepart.plusHours(heures).plusMinutes(minutes);
 //        return heureArrivee;
 //    }
+    /**
+     * Transforme l'objet livraison en DTO
+     * @return le DTO
+     */
     public LivraisonDTO toDTO() {
         return LivraisonDTO.builder()
                 .intersection(intersection != null ? intersection.toDTO() : null)
@@ -38,6 +45,12 @@ public class Livraison {
                 .heureArrivee(this.getHeureArrivee())
                 .build();
     }
+
+    /**
+     *
+     * @param dto Transforme l'objet LivraisonDTO en livraison
+     * @return
+     */
 
     public static Livraison fromDTO(LivraisonDTO dto) {
         if (dto == null) return null;

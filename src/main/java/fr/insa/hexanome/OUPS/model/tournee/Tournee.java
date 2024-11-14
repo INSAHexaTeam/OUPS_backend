@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//La tournée est l'ensemble des livraisons à effectuer
+/**
+ * Ensemble des intersections que dois prendre un coursier
+ */
 @Data
 @Builder
 @AllArgsConstructor
