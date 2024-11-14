@@ -190,15 +190,7 @@ public class GestionController {
                 .build();
 
         DemandeLivraisons demandeLivraisonsATransformer = request.toDemandeLivraisons();
-        Livraison livraisonEntrepot = Livraison.builder()
-                .intersection(entrepot.getIntersection())
-                .estUneLivraison(false)
-                .heureArrivee(LocalTime.of(8,0))
-                .build();
 
-        if (livraisonEntrepot.getIntersection() == null) {
-            throw new IllegalArgumentException("L'entrepôt n'a pas été défini.");
-        }
 
         TourneeLivraison tourneeLivraison = TourneeLivraison.builder()
                 .parcoursDeLivraisons(new ArrayList<>())
@@ -220,6 +212,22 @@ public class GestionController {
 
         for(Cluster<ClusterableLivraison> clusterLivraison : clusters){
 
+            Livraison livraisonEntrepot = Livraison.builder()
+                    .intersection(entrepot.getIntersection())
+                    .estUneLivraison(false)
+                    .heureArrivee(LocalTime.of(8,0))
+                    .build();
+
+            Livraison livraisonEntrepotFin = Livraison.builder()
+                    .intersection(entrepot.getIntersection())
+                    .estUneLivraison(false)
+                    .heureArrivee(LocalTime.of(15,0))
+                    .build();
+
+            if (livraisonEntrepot.getIntersection() == null) {
+                throw new IllegalArgumentException("L'entrepôt n'a pas été défini.");
+            }
+
             List<Livraison> demandeLivraisonsCourante = new ArrayList<>
                     (clusterLivraison.getPoints().stream().map(ClusterableLivraison::getLivraison).toList());
 
@@ -237,7 +245,6 @@ public class GestionController {
                     .livraisons(demandeLivraisonsCourante)
                     .build();
 
-
             test.calculDijkstra(); //rempli la matrice d'adjacence
 
             TSPGraph graph = TSPGraph.builder() //TSP du prof
@@ -247,13 +254,11 @@ public class GestionController {
                     .build();
 
             Integer[] sol = graph.getSolution(); //sera la liste des indices des livraisons dans l'ordre de passage
-            demandeLivraisonsCourante.addLast(livraisonEntrepot); //on ajoute l'entrepot à la fin
-            sol = Arrays.copyOf(sol,sol.length+1);
-            sol[sol.length-1] = sol[0]; //on revient à l'entrepot
+            demandeLivraisonsCourante.addLast(livraisonEntrepotFin); //on ajoute l'entrepot à la fin*
 
             List<Livraison> solutionCourante = new ArrayList<>();
             List<Intersection> chemin = new ArrayList<>();
-            LocalTime heureArrivee = LocalTime.of(8,0);
+            LocalTime heureArrivee = livraisonEntrepot.getHeureArrivee(); //on commence à décompter les heures à partir de l'heure de départ de l'entrepot
             for(int j =0;j<sol.length;j++){
                 Livraison livraison = demandeLivraisonsCourante.get(sol[j]);
                 if (j>0){
@@ -270,23 +275,18 @@ public class GestionController {
             }
             ElemMatrice elem = test.getMatrice()[sol[sol.length-1]][sol[0]];//pour aller du dernier à l'entrepot
 
-            Livraison livraison = demandeLivraisonsCourante.get(sol[sol.length-1]);//on récupère la dernière livraiso (l'entrepot)
+            Livraison entrepotFinal = livraisonEntrepotFin;
             double distanceMetre = test.getMatrice()[sol[sol.length-1]][sol[(0)]].getCout();//on récupère la distance entre entrepot et dernière livraison
             heureArrivee = heureArrivee.plusMinutes((long) (distanceMetre/1000/15*60));
-            livraison.setHeureArrivee(heureArrivee);
+            entrepotFinal.setHeureArrivee(heureArrivee);
             chemin.addAll(elem.getIntersections());
-
-
-
+            solutionCourante.add(entrepotFinal);
 
             parcoursParCoursier.setChemin(chemin);
-//            solutionCourante.removeFirst(); //on enlève l'entrepot de la liste des livraisons
             parcoursParCoursier.setLivraisons(solutionCourante);
+            //parcoursParCoursier.getLivraisons().getFirst().setHeureArrivee(LocalTime.of(8,0));
             tourneeLivraison.getParcoursDeLivraisons().add(parcoursParCoursier);
-
         }
-
-
 
         return ResponseEntity.ok(tourneeLivraison.toDTO());
 
