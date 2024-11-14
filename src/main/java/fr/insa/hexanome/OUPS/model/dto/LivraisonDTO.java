@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalTime;
 
 @Data
 @Builder
@@ -12,4 +15,6 @@ import lombok.NoArgsConstructor;
 public class LivraisonDTO {
     private IntersectionDTO intersection;
     private boolean estUneLivraison;
+    private double distanceParcourue;
+    private LocalTime heureArrivee;
 }

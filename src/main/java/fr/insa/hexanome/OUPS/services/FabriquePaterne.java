@@ -62,6 +62,10 @@ public class FabriquePaterne {
             this.carte.ajouterIntersection(intersection);
         }
 
+        //TODO check if user can upload other type of doc
+
+
+
         //Charger Segments
         NodeList troncons = doc.getElementsByTagName("troncon");
         for (int i = 0; i < troncons.getLength(); i++) {
