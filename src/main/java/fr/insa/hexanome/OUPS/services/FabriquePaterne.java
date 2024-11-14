@@ -1,6 +1,7 @@
 package fr.insa.hexanome.OUPS.services;
 
-import fr.insa.hexanome.OUPS.model.*;
+import fr.insa.hexanome.OUPS.model.carte.*;
+import fr.insa.hexanome.OUPS.model.tournee.DemandeLivraisons;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -73,11 +73,11 @@ public class FabriquePaterne {
         }
         return this.carte;
     }
-    public Livraisons chargerDemande(String cheminFichier) throws ParserConfigurationException, IOException, SAXException {
+    public DemandeLivraisons chargerDemande(String cheminFichier) throws ParserConfigurationException, IOException, SAXException {
         if(carte == null || this.carte.getIntersections().isEmpty()){
             throw new IllegalArgumentException("Carte non chargée");
         }
-        System.out.println(this.carte);
+        //System.out.println(this.carte);
         File fichier = new File(cheminFichier);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
@@ -93,7 +93,9 @@ public class FabriquePaterne {
                 .intersection(intersectionEntrepot)
                 .heureDepart(nodeEntrepot.getAttributes().getNamedItem("heureDepart").getNodeValue())
                 .build();
-        Livraisons livraisons = new Livraisons(entrepot);
+        DemandeLivraisons demandeLivraisons = DemandeLivraisons.builder()
+                .entrepot(entrepot)
+                .build();
 
         NodeList nodeListLivraisons = doc.getElementsByTagName("livraison");
         for(int i = 0; i < nodeListLivraisons.getLength(); i++){
@@ -101,10 +103,10 @@ public class FabriquePaterne {
             Long idLivraison = Long.parseLong(nodeLivraison.getAttributes().getNamedItem("adresseLivraison").getNodeValue());
             Intersection intersectionLivraison = this.carte.trouverIntersectionParId(idLivraison);
             Livraison livraison = Livraison.builder()
-                    .adresseLivraison(intersectionLivraison)
+                    .intersection(intersectionLivraison)
                     .build();
-            livraisons.add(livraison);
+            demandeLivraisons.add(livraison);
         }
-        return livraisons;
+        return demandeLivraisons;
     }
 }
