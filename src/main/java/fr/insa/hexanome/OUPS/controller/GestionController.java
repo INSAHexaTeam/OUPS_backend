@@ -27,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static fr.insa.hexanome.OUPS.services.ItineraireService.trouverCheminEntreDeuxIntersections;
 
@@ -200,7 +201,11 @@ public class GestionController {
         // Clustering des livraisons (code existant...)
         List<ClusterableLivraison> clusterableLivraisons = new ArrayList<>();
         for (Livraison livraison : demandeLivraisonsATransformer) {
-            clusterableLivraisons.add(new ClusterableLivraison(livraison));
+            Livraison livraisonClean = Livraison.builder()
+                    .intersection(carte.trouverIntersectionParId(livraison.getIntersection().getId()))
+                    .estUneLivraison(true)
+                    .build();
+            clusterableLivraisons.add(new ClusterableLivraison(livraisonClean));
         }
 
         //fix une graine pour avoir des résultats reproductibles (voir la fonction du dessus pour voir comment faire sans graine)
@@ -293,7 +298,114 @@ public class GestionController {
     }
 
 
+    @PostMapping("/calculerItineraireOrdonneOpti/{coursierId}")
+    public ResponseEntity<ParcoursDeLivraisonDTO> calculItineraireOrdonnePourCoursier(
+            @PathVariable int coursierId,
+            @RequestBody TourneeLivraisonDTO request
+    ) {
+        try {
+            if (request == null || request.getLivraisons() == null) {
+                return ResponseEntity.badRequest().build();
+            }
 
+            // Créer une nouvelle tournée qui contiendra les chemins calculés
+//            TourneeLivraison tourneeLivraisonResultat = TourneeLivraison.builder()
+//                    .parcoursDeLivraisons(new ArrayList<>())
+//                    .build();
+
+            // Pour chaque parcours de livraison dans la requête
+            for (ParcoursDeLivraisonDTO parcoursDTO : request.getLivraisons()) {
+
+
+            }
+                ParcoursDeLivraisonDTO parcoursDTO = request.getLivraisons().get(coursierId);
+//                if (parcoursDTO == null || parcoursDTO.getLivraisons() == null) {
+//                    continue;
+//                }
+
+                // Convertir le DTO en modèle
+                DemandeLivraisons demandeLivraisons = parcoursDTO.getLivraisons().toDemandeLivraisons();
+//                   if (demandeLivraisons == null || demandeLivraisons.isEmpty()) {
+//                    continue;
+//                }
+
+                //Intersection.fromDTO(livraisonDTO.getIntersection())
+
+                List<Livraison> livraisonsCompletes = new ArrayList<>();
+                for (LivraisonDTO livraisonDTO : parcoursDTO.getLivraisons().getLivraisons()) {
+                    Livraison livraison = Livraison.builder()
+                            .intersection(carte.trouverIntersectionParId(livraisonDTO.getIntersection().getId()))
+                            .estUneLivraison(true)
+                            .build();
+                    livraisonsCompletes.add(livraison);
+                }
+
+
+                // Créer un nouveau parcours pour ce coursier
+                ParcoursDeLivraison parcoursDeLivraison = ParcoursDeLivraison.builder()
+                        .entrepot(demandeLivraisons.getEntrepot())
+                        .livraisons(new ArrayList<>(livraisonsCompletes))
+                        .chemin(new ArrayList<>())
+                        .build();
+
+                // Calculer la matrice des chemins les plus courts
+                CalculItineraire calculItineraire = CalculItineraire.builder()
+                        .matrice(new ElemMatrice[livraisonsCompletes.size()][livraisonsCompletes.size()])
+                        .carte(carte)
+                        .livraisons(livraisonsCompletes)
+                        .build();
+
+                calculItineraire.calculDijkstra();
+
+                // Construire le chemin complet et mettre à jour les heures d'arrivée
+                List<Intersection> cheminComplet = new ArrayList<>();
+                LocalTime heureArrivee = LocalTime.of(8,0);
+
+                // Parcourir les points dans l'ordre
+                for (int i = 0; i < livraisonsCompletes.size() - 1; i++) {
+                    Livraison livraisonCourante = livraisonsCompletes.get(i);
+
+                    // Mettre à jour l'heure d'arrivée
+                    if (i > 0) {
+                        ElemMatrice elemPrecedent = calculItineraire.getMatrice()[i-1][i];
+                        if (elemPrecedent != null) {
+                            double distanceMetre = elemPrecedent.getCout();
+                            heureArrivee = heureArrivee.plusMinutes((long) (distanceMetre/1000/15*60));
+                            livraisonCourante.setHeureArrivee(heureArrivee);
+                        }
+                    }
+
+                    // Ajouter le chemin vers le point suivant
+                    ElemMatrice elem = calculItineraire.getMatrice()[i][i+1];
+                    if (elem != null && elem.getIntersections() != null) {
+                        cheminComplet.addAll(elem.getIntersections());
+                    }
+                }
+
+                // Mettre à jour l'heure d'arrivée pour le dernier point
+                if (livraisonsCompletes.size() > 1) {
+                    Livraison derniereLivraison = livraisonsCompletes.get(livraisonsCompletes.size() - 1);
+                    ElemMatrice elemDernier = calculItineraire.getMatrice()[livraisonsCompletes.size() - 2][livraisonsCompletes.size() - 1];
+                    if (elemDernier != null) {
+                        double distanceFinale = elemDernier.getCout();
+                        heureArrivee = heureArrivee.plusMinutes((long) (distanceFinale/1000/15*60));
+                        derniereLivraison.setHeureArrivee(heureArrivee);
+                    }
+
+                    parcoursDeLivraison.getLivraisons().getFirst().setHeureArrivee(LocalTime.of(8,0));
+                }
+
+                // Finaliser le parcours
+                parcoursDeLivraison.setChemin(cheminComplet);
+//              tourneeLivraisonResultat.getParcoursDeLivraisons().add(parcoursDeLivraison);
+
+            return ResponseEntity.ok(parcoursDeLivraison.toDTO());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
 
 }
